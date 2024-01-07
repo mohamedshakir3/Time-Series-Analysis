@@ -1,0 +1,14 @@
+
+
+\chapter{Diagnostic Measures}
+
+Given an $\ar(1)$ model where rwe estimate $\phi$ and $\sigma_Z^2$ with $\hat{\phi}$ and $\hat{\sigma}_Z^2$, we can define the \textbf{residuals} as
+\[\hat{Z}_t = X_{t} - \hat{\phi}X_{t-1}\]
+We will examine the residuals to see if there is any significant autocorrelation so that we need to check for higher order ARMA processes. We want the autocorrelation of the residuals to be near zero.
+
+\begin{itemize}
+    \item If the random variables are iid, then the correlations at any lag $h \neq 0$ is 0. However the sample correlations are not typically 0. The sample correlation at any lag is approximately normally distributed with mean 0 and variance $\frac{1}{n}$ for large $n$. The confidence intervals for the sample autocorrelation is $\pm z_{\alpha/2}\frac{1}{\sqrt{n}}$. Whenever the sample autocorrelation is within these confidence intervals, we treat it as 0.
+    \item Let $h$ be a positive integer, we define the Ljung-Box statistic as
+    \[Q_h = n\sum_{j=1}^h \frac{\hat{\gamma}_X(j)}{\hat{\gamma}_X(0)}\]
+    Under the iid assumption, $Q_h \sim \chi^2$ with $h$ degrees of freedom. A large value of $Q_h$ suggests that the sample autocorrelations of the data are too large for the data to be a sample from an iid sequence. We reject the iid hypothesis if $Q_h > \chi^2_{\alpha,h}$. If the iid hypothesis is rejcted, then the fitted model is not correct.
+\end{itemize}

@@ -1,0 +1,246 @@
+\chapter{Introduction}
+
+A \textbf{time series} is a set of observations $x_t$, each one being recorded at a specific time $t$. A \textit{discrete-time time series} is one in which the set $T_0$ of times at which observations are made is a discrete set. \textit{Continuous-time time series} are obtained when observations are recorded continuously over some time interval.
+
+\begin{definition}
+    A \emph{time series model} for the observed data $\{x_t\}$ is a specification of the joint distributions of a sequence of random variables $\{X_t\}$, of which $\{x_t\}$ is postulated to be a realization.
+\end{definition}
+
+\section{Examples of Time Series Models}
+A typical structure of a time series is 
+\[X_t = m_t + Y_t + S_t\]
+where $m_t$ is a trend, $S_t$ is a seasonal part, and $Y_t$ is a stationary part.
+\begin{example}[White Noise]
+    \emph{
+        The simplest model for a time series is one with no trend or seasonal component, the observations are independent and identically distributed (iid) random variables with zero mean. Let $\{Z_t\}$ be a sequence of iid random variables with mean zero and variance 1. This sequence is called \textbf{white noise}.
+    }    
+\end{example}
+
+\begin{example}[Random Walk]
+    \emph{
+        The random walk $\{S_t, t=0,1,2,\ldots\}$ is obtained by cumulatively summing iid random variables. Thus a random walk with zero mean is obtained by defining $S_0 = 0$, and 
+        \[S_t = X_1 + X_2 + \cdots + X_t, \ t = 1,2,\ldots\]
+        Let $\{Z_t\}$ be a sequence of iid random variables with mena zero and variance $\sigma_Z^2$. We define $X_t = \sum_{i=1}^t Z_i$. Then $\{X_t\}$ is a random walk with zero mean.
+    }
+\end{example}
+
+
+\section{Data Pre-processing and Eliminating Trend}
+
+In order to analyse the time series $X_t = m_t + Y_t + S_t$, we need to eliminate the trend and seasonal component, leaving us with the \textit{stationary part} $Y_t$ which will be defined below. The methods for eliminating trends are as follows:
+
+\begin{itemize}
+    \item \textbf{Differencing:} For the time series $\{X_t,\ t=1,\ldots, n\}$, calculate
+    \[\nabla X_t = X_t - X_{t-1}, \ t = 2,\ldots,n\]
+    \item \textbf{Polynomial Fitting:} If the trend follows some polynomial, say $m_t = a + bt$, we can estimate the parameters $a,b$ using least squares, i.e minimize
+    \[\sum_{t=1}^n (X_t - a - bt)^2\]
+    This becomes a simple regression problem with the independent variable being the time $t$, and the dependent variable is the time series $X_t$. So we obtain an estimate for the trend 
+    \[\hat{m}_t = \hat{a}+\hat{b}t\]
+    and the detrended series is
+    \[\hat{Y}_t = X_t - \hat{m}_t\]
+    \item \textbf{Exponential Smoothing:} Let $\alpha \in (0,1)$. Then the trend is estimated by 
+    \[\hat{m}_1 = X_1, \ \hat{m}_t = \alpha X_t + (1-\alpha)\hat{m}_{t-1}, \ t=2,\ldots,n\]
+    \item \textbf{Moving Average Smoothing:} Let $q$ be a positive integer. Then 
+    \[\hat{m}_t = (2q+1)^{-1}\sum_{j=-q}^q X_{t+j}, \ q+1 \leq t \leq n-q\]
+    The detrended time series becomes 
+    \[\hat{Y}_t = X_t - \hat{m}_t, \ t = q+1, \ldots, n-q\]
+    Recall that our time series $X_t$ is compromised of a trend $m_t$ and stationary part $Y_t$, $X_t = m_t + Y_t$. We are assuming the mean $E(Y_t) = 0$, so 
+    \[(2q+1)^{-1}\sum_{j=-q}^q X_{t+j} = (2q+1)^{-1}\sum_{j=-q}^q m_{t+j} + (2q+1)^{-1}\sum_{j=-q}^q Y_{t+j}\]
+    We assume that the mean is 0, so this simplifies to the above expression.
+
+\end{itemize}
+
+
+\section{Stationary Models and the Autocorrelation Function}
+
+
+\begin{definition}
+    Let $\{X_t\}$ be a time series with $E(X_t^2) < \infty$. The \emph{mean function} of $\{X_t\}$ is defined by
+    \[\mu_X(t) = E(X_t)\]
+    The \emph{(auto) covariance function} of $\{X_t\}$ is defined by
+    \[\gamma_X(r,s) = \Cov(X_r,X_s) = E[(X_r - \mu_X(r))(X_s-\mu_X(s))]\]
+\end{definition}
+\noindent
+Note that we denote $\mu_X(t)$ by $\mu(t)$ and $\gamma_X(t,s)$ as $\gamma(t,s)$.
+\subsection{Properties of Covariances}
+\begin{itemize}
+    \item For $a \in \real$, 
+    \[\Cov(X,a) = 0\]
+    \item For $a,b\in \real$,
+    \[\Cov(X, aU + bV) = a\Cov(X,U) + b\Cov(X,V)\]
+    \item $\Cov(X,Y)^2 \leq \Var(X)\Var(Y)$
+\end{itemize}
+
+
+\begin{definition}
+    A time series $\{X_t\}$ is \emph{(weakly) stationary} if 
+    \begin{enumerate}
+        \item $\mu(t)$ is independent of $t$, and
+        \item $\gamma(t+h,t) = \gamma(h)$, in other words $\gamma$ is independent of $t$ and is a function that depends only on 1 variable $h = t-s$.
+    \end{enumerate}
+\end{definition}
+
+\begin{definition}
+    Let $\{X_t\}$ be a stationary time series. The \emph{autocorrelation function} is defined as 
+    \[\rho_X(h) = \frac{\gamma_X(h)}{\gamma_X(0)} = \frac{\Cov(X_0, X_h)}{\Var(X_0)}\]
+\end{definition}
+
+\subsection{Properties of Autocorrelation and Autocovariance Functions}
+
+\begin{enumerate}[label=(\roman*)]
+    \item $|\rho(h)| \leq 1$, i.e $|\gamma(h)| \leq \gamma(0)$.
+    \item $\gamma(-h) = \gamma(h)$
+    \item $\gamma(h)$ is a non-negative definite funtcion, that is for all non-negative integers n and real numbers $a_1,\ldots,a_n$,
+    \[\sum_{i=1}^n\sum_{j=1}^n a_ia_j\gamma(|i-j|) \geq 0\]
+\end{enumerate}
+
+\begin{proof}
+    \begin{enumerate}[label=(\roman*)]
+        \item This result is obvious. 
+        \item This result follows from the fact $\Cov(X_t, X_{t+h}) = \Cov(X_t, X_{t-h})$.
+        \item This follows from the properties of covariance, 
+        \[0 \leq \Var\left(\sum_{j=1}^na_jX_j\right) = \Cov\left(\sum_{i=1}^n a_iX_i, \sum_{i=1}^n a_iX_i\right) = \sum_{i=1}^n\sum_{j=1}^na_ia_j\Cov(X_i,X_j) = \sum_{i=1}^n\sum_{j=1}^n a_ia_j\gamma(i-j)\]
+        Then from (ii), $\gamma(i-j) = \gamma(|i-j|)$.
+    \end{enumerate}
+\end{proof}
+
+\begin{example}[White Noise]
+    \emph{
+        Let $\{Z_t\}$ be a sequence of independent random variables with mean 0 and variance 1. Then, clearly $\{Z_t\}$ is stationary with the covariance function 
+        \[\gamma_Z(t+h, t) = \begin{cases}
+            1 & h = 0\\
+            0 & h \neq 0
+        \end{cases}\]
+    }
+\end{example}
+\begin{example}[Random Walk]
+    \emph{
+        Let $\{Z_t\}$ be a sequence of iid random variables with mean 0 and variance $\sigma_Z^2$. We will define $S_t = \sum_{i=1}^t Z_i$, with $E(S_t) = 0$, then 
+        }
+        \begin{align*}
+            \gamma_S(t,t+h) &= \Cov(S_t, + S_{t+h}) \\
+            &= \Cov(S_t, S_t + Z_{t+1} + \cdots + Z_{t+h}) \\
+            &= \Cov(S_t,S_t) + \Cov(S_t, Z_{t+1} + \cdots + Z_{t+h}) \\
+            &= \Cov(S_t,S_t) + \Cov(Z_1 + \cdots Z_t, Z_{t+1} + \cdots + Z_{t+h}) \\
+            &= \Cov(S_t, S_t) + 0 = \Var(S_t)\\
+            &= t\sigma_Z^2
+        \end{align*}
+        \emph{
+            We see that the variance of $S_t$ depends on $t$, hence the covariance function depends on $t$. Thus, the model is not stationary.
+        }
+\end{example}
+
+\begin{example}[Model with Trend]
+    \emph{
+        Let $\{Z_t\}$ be a sequence of iid random variables with mean $\mu_Z = E(Z_t)$, and define 
+        \[X_t = 1 + 2t Z_t, \ t = 1,2,\ldots\]
+        Then,
+        \[E(X_t) = 1 + 2t + \mu_Z\]
+        Thus, the mean function depends on $t$, so the model is not stationary.
+    }
+\end{example}
+
+\begin{example}
+    \emph{
+        Let $\{Z_t\}$ be a sequence of iid random variables with mean 0 and variance $\sigma_Z^2$. Define 
+        \[X_t = Z_tZ_{t-1}Z_{t-2}, \ t \geq 3\]
+        Then, we have 
+        \[E(X_t) = E(Z_tZ_{t-1}Z_{t-2}) = E(Z_t)E(Z_{t-1})E(Z_{t-2}) = 0\]
+        \[\Var(X_t) = E(X_t^2) = E(Z_t^2Z_{t-1}^2Z_{t-2}^2) = \sigma_Z^6\]
+        \[\Cov(X_t,X_{t+1}) = E(X_tX_{t+1}) = E({Z_tZ_{t-1}Z_{t-2}}{Z_{t+1}Z_tZ_{t-1}}) = E(Z_{t+1})E(Z_t^2)E(Z_{t-1}^2)E(Z_{t-2}) = 0\]
+        Therefore, the model is stationary.
+        }    
+\end{example}
+
+\begin{example}[First-order Moving Average MA(1)]
+    \emph{
+        Consider the series defined by
+        \[X_t = Z_t + \theta Z_{t-1}\]
+        with $\{Z_t\}$ being a sequence of iid random variables with mean 0 and variance $\sigma_Z^2$, and $\theta \in \real$. Then, we have $E(X_t) = 0$, and
+        \begin{align*}
+            \Var(X_t) &= E(X_t^2) = E(\{Z_t + \theta Z_{t-1}\}^2)\\
+            &= E(Z_t^2) + \theta^2 E(Z_{t-1}^2) + 2\theta E(Z_tZ_{t-1})\\
+            &= \sigma_Z^2 + \theta^2\sigma_Z^2 + 0\\
+            &= (1+\theta^2)\sigma_Z^2
+        \end{align*}
+        So the covariance function is 
+        \[\gamma_X(t+h,t) = \begin{cases}
+            \sigma^2(1 + \theta^2) & h = 0\\
+            \theta\sigma_Z^2 & h = \pm 1\\
+            0 & |h| > 1
+        \end{cases}\]
+        Thus, the model is stationary.
+        }
+\end{example}
+
+\section{Partial Autocorrelation Function}
+
+The correlation coefficient between 2 two or more variables can be a consequence of multilinearity. We use the partial correlation function to remove multilinearity. Let $\{X_t\}$ be a stationary time series with mean 0. The \emph{partial autocorrelation function} between $X_t$ and $X_{t+k}$ is defined as the correlation between $X_t$ and $X_{t+k}$ after conditioning out in the time series $X_{t+1},\ldots, X_{t+k-1}$.\\
+
+Suppose we want to find the partial autocorrelation function of $X_1$ and $X_2$ from the time series $\{X_t\}$ when the effect of $X_3$ is removed, then we follow the following procedure:
+
+\begin{enumerate}[label=(\roman*)]
+    \item We first regress $X_1$ on $X_3$, so we compute the regression coefficient $\beta_{13}$,
+    \[X_1 = \beta_{13}X_3 + Z\]
+    where $Z$ has mean zero and is independent of $X_3$. Then 
+    \[X_1X_3 = \beta_{13}X_3^2 + ZX_3\]
+    \[E(X_1X_3) = \beta_{13}E(X_3^2) + E(ZX_3)\]
+    \[\gamma_X(2) = \beta_{13}\gamma_X(0) + E(ZX_3) = \beta_{13}\gamma_X(0)\]
+    Thus,
+    \[\beta_{13} = \frac{\gamma_X(2)}{\gamma_X(0)} = \rho_X(2)\]
+    \item Then similarily, we regress $X_2$ on $X_3$, 
+    \[X_2 = \beta_{23}X_3 + V\]
+    and find 
+    \[\beta_{23} = \frac{\gamma_X(1)}{\gamma_X(0)} = \rho_X(2)\]
+    \item Finally, we define the partial autocorrelation function (PACF) between $X_1$ and $X_2$ when removing the effect of $X_3$ as
+    \[\rho_{12.3} = \Cor(X_1 - \beta_{13}X_3, X_2-\beta_{23}X_3) = \frac{\Cov(X_1 - \beta_{13}X_3, X_2 - \beta_{23}X_3)}{\sqrt{\Var(X_1-\beta_{13}X_3)}\sqrt{\Var(X_2-\beta_{23}X_3)}}\]
+    We can rewrite the covariance as 
+    \begin{align*}
+        \Cov(X_1 - \beta_{13}X_3, X_2-\beta_{23}X_3) &= \Cov(X_1,X_2) + \Cov(\beta_{13}X_3, \beta_{23}X_3) - \Cov(X_1,\beta_{23}X_3) - \Cov(\beta_{13}X_3,X_2)\\
+        &= \gamma_X(1) + \beta_{13}\beta_{23}\Cov(X_3,X_3) - \beta_{23}\Cov(X_1,X_3) - \beta_{13}\Cov(X_3,X_1)\\
+        &= \gamma_X(1) + \beta_{13}\beta_{23}\gamma_X(0) - \beta_{23}\gamma_X(2) - \beta_{13}\gamma_X(1)\\
+        &= \gamma_X(1) + \rho_X(2)\rho_X(1)\gamma_X(0) - \rho_X(1)\gamma_X(2) - \rho_X(2)\gamma_X(1)\\
+        &= \gamma_X(1) - \rho_X(2)\gamma_X(1) - \frac{\gamma_X(1)}{\gamma_X(0)}\gamma_X(2) - \rho_X(2)\gamma_X(1)\\
+        &= \gamma_X(1) + \rho_X(2)\gamma_X(1) - \rho_X(2)\gamma_X(1) - \rho_X(2)\gamma_X(1)\\
+        &= \gamma_X(1)(1-\rho_X(2))
+    \end{align*}
+    We can also compute the variances 
+    \begin{align*}
+        \Var(X_1 - \beta_{13}X_3) &= \Cov(X_1 - \beta_{13}X_3, X_1 - \beta_{13}Y_3)\\
+        &= \Cov(X_1,X_1) + \Cov(\beta_{13}X_3,\beta_{13}X_3) - \Cov(X_1,\beta_{13}X_3) - \Cov(\beta_{13}X_3,X_1)\\
+        &= \gamma_X(0) + \beta_{13}^2\gamma_X(0) - \beta_{13}\gamma_X(1) - \beta_{13}\gamma_X(1)\\
+        &= \gamma_X(0) + \beta_{13}^2\gamma_X(0) - 2\beta_{13}\gamma_X(1)\\
+        &= \gamma_X(0)(1-\rho_X^2(2))
+    \end{align*}
+    Similarily, 
+    \[\Var(X_2 - \beta_{23}X_3) = \gamma_X(0)(1- \rho_X^2(1))\]
+    Thus, the partial autocorrelation function is
+    \[\rho_{12.3} = \frac{\gamma_X(1)(1-\rho_X(2))}{\gamma_X(0)\sqrt{(1-\rho_X^2(2))(1-\rho_X^2(1))}} = \frac{\Cor(X_1,X_2) - \Cor(X_2,X_3)\Cor(X_1,X_3)}{\sqrt{(1-\Cor^2(X_1,X_3))(1-\Cor^2(X_2,X_3))}}\]
+\end{enumerate}
+
+\textbf{Note.} Since the time series $\{X_t\}$ is stationary, we can write
+\[\gamma_X(1) = \Cov(X_1, X_2) = \Cov(X_2,X_3)\]
+So we can also say $\Cor(X_1,X_2) = \Cor(X_2,X_3)$. The PACF between $X_1$ and $X_3$ when removing the effect of $X_2$ is
+\[\rho_{13.2} = \frac{\Cor(X_1,X_3) - \Cor(X_1,X_2)\Cor(X_2,X_3)}{\sqrt{(1-\Cor^2(X_1,X_2))(1-\Cor^2(X_2,X_3))}}\]
+\begin{definition}
+    Given a time series $\{X_t\}$, the partial autocorrelation at lag $h$, denoted $\alpha(h)$, is the autocorrelation between $X_t$ and $X_{t+h}$ with the linear dependence of $X_t$ on $X_{t+1},\ldots,X_{t+h-1}$ removed.
+\end{definition}
+\noindent
+\textbf{Note.} $\alpha(1) = \rho_X(1)$, and $\alpha(2) = \rho_{13.2}$.
+
+\begin{example}[MA(1)]
+    \emph{
+        Recall the model $X_t = Z_t + \theta Z_{t-1}$, where $\{Z_t\}$ is a sequence of iid random variables with mean 0 and variance $\sigma_Z^2$. We have
+        \[\rho_X(h) = \begin{cases}
+            1 & h = 0\\
+            \frac{\theta}{1+\theta^2} & h = \pm 1\\
+            0 & |h| > 1
+        \end{cases}\]
+        Then, 
+        \begin{align*}
+            \alpha(2) &= \frac{\Cor(X_1,X_3) - \Cor(X_1,X_2)\Cor(X_2,X_3)}{\sqrt{(1-\Cor^2(X_1,X_2))(1-\Cor^2(X_2,X_3))}}\\
+            &= \frac{\rho_X(2) - \rho^2_X(1)}{\sqrt{1-\rho_X^2(1)}\sqrt{1-\rho_X^2(1)}}\\
+            &= \frac{0 - \frac{\theta^2}{(1+\theta^2)^2}}{1 - \frac{\theta^2}{(1+\theta^2)^2}} = \frac{-\theta^2}{1+\theta^2+\theta^4}\\
+        \end{align*}
+        }
+\end{example}

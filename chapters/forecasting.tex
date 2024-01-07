@@ -1,0 +1,159 @@
+\chapter{Forecasting of Stationary Time Serires}
+
+Our objective is to forecast or predict $X_{n+k}$, for some $k\geq1$, having observed $\{X_1,\ldots,X_n\}$ from a time series with a known mean $\mu$ and known autocovariance function $\gamma_X(k)$.\\
+
+Consider a stationary sequence with mean $\mu = E(X_t)$ and covariance $\gamma_X(h)$. Denote $P_nX_{n+k}$ as the predicted value of $X_{n+k}$ given that we have $n$ observations $X_1,\ldots,X_n$. Then, the best linear predictor of $X_{n+k}$ is given by
+\[P_nX_{n+k} = a_0 + a_1X_n + \cdots + a_nX_1 = a_0 \sum_{i=1}^n a_iX_{n+1-i}\]
+where $a_0,\ldots,a_n$ are constants. We want to find optimal values for $a_0,\ldots,a_n$, in this case we will minimize the mean squared error (MSE) of the prediction
+\[E\left[(X_{n+k} - P_nX_{n+k})^2\right]\]
+
+\section{Yule-Walker Procedure}
+
+Define 
+\[S(a_0,a_1, \ldots, a_n) = E\left[(X_{n+k}-P_nX_{n+k})^2\right] = E\left[\left(X_{n+k} - a_0 - \sum_{i=1}^n a_1X_{n+1-i}\right)^2\right]\]
+Then, we take the derivative of $S$ with respect to $a_0,\ldots,a_n$ and set them equal to zero. This gives us 
+\[a_0 = \mu\left(1-\sum_{i=1}^n a_i\right)\]
+We assume $\mu = 0$, so $a_0 = 0$. Then we take derivatives with respect to $a_1,\ldots,a_n$ to get 
+\[E\left[\left(X_{n+k}-\sum_{i=1}^na_iX_{n+1-i}\right)X_{n+1-j}\right] = 0, \ j=1,\ldots,n\]
+Equivenlently, we can write this as
+\[E(X_{n+k}X_{n+1-j}) - \sum_{i=1}^n a_iE(X_{n+1-i}X_{n+1-j}) = 0, \ j = 1,\ldots, n\]
+The above expectations are the covariances at lags $n+k - (n+1-j) = k-1+j$ and $n+1-i-(n+1-j) = i-j$, so we can write this a system of equations
+\[\gamma_X(k-i+j) = \sum_{i=1}^na_i\gamma_X(i-j), \ j = 1,\ldots, n\]
+We can define this using matrix and vector notation, define 
+\[\Gamma_n = \begin{bmatrix}\gamma_X(i-j)\end{bmatrix}^n_{i,j=1}\]
+\[\gamma(n;k) = \begin{pmatrix}
+ \gamma_X(k) & \cdots & \gamma_X(k+n-1) \\
+\end{pmatrix}^T, \ \vec{a}_n = \begin{pmatrix}
+    a_1, \ldots, a_n
+\end{pmatrix}^T\]
+
+The matrix $\Gamma_n$ is called the variance-covariance matrix of $(X_1,\ldots,X_n)$. Then, we can write the system of equations as
+\[\Gamma_na_n = \gamma(n;k)\]
+Hence, this gives us the Yule-Walker formula for forecasting 
+\[\vec{a}_n = \Gamma_n^{-1}\gamma(n;k)\]
+This depends on $\Gamma_n$ being invertible, and that the time series model is stationary. We require the covariances only, and these can be computed if we can verify the data comes from a particular model, otherwise we use the sample covariances.
+
+\subsection{Mean Square Prediction Error (MSPE)}
+
+The Yule-Walker procedure minimizes the mean squared prediction error (MSPE) 
+\[\mspe_n(k) = E\left[\left(X_{n+k} - \sum_{i=1}^na_iX_{n+1-i}\right)^2\right]\]
+We can rewrite this as 
+\[E\left[\left(X_{n+k} - \sum_{i=1}^na_iX_{n+1-i}\right)^2\right] = \gamma_X(0) - \vec{a}_n^T \gamma(n;k)\]
+The mean square prediction error depends on $k$, meaning that predictions made further in the future (a larger $k$ value) may have a larger prediction error.
+
+\begin{example}[AR(1)]
+    \emph{
+        Consider the $\ar(1)$ model $X_t = \phi X_{t-1} + Z_t$, where $Z_t$ are iid centered with mean 0 and variance $\sigma_Z^2$, and $|\phi| < 1$. Recall that 
+        \[\gamma_X(h) = \phi^h\frac{\sigma_Z^2}{1-\phi^2}, \ h \geq 0\]
+        Then, 
+        \[\gamma(n;k) = \gamma(n;1) = \begin{pmatrix}
+            \gamma_X(1) & \cdots & \gamma_X(n)
+        \end{pmatrix}^T = \frac{\sigma_Z^2}{1-\phi^2}\begin{pmatrix}
+            \phi & \cdots & \phi^n
+        \end{pmatrix}^T\]
+        Then $\Gamma_n a_n = \gamma(n;1)$ becomes
+        \[\frac{\sigma_Z^2}{1-\phi^2}\begin{bmatrix}
+            1 & \phi & \phi^2 & \cdots & \phi^{n-1}\\
+            \phi & 1 & \phi & \cdots & \phi^{n-2}\\
+            \vdots & \vdots & \vdots & \ddots & \vdots \\
+            \phi^{n-1} & \phi^{n-2} & \phi^{n-3} & \cdots & 1
+        \end{bmatrix}\begin{bmatrix}
+            a_1\\ \vdots \\ a_n
+        \end{bmatrix} = \frac{\sigma_Z^2}{1-\phi^2}\begin{bmatrix}
+            \phi \\ \vdots \\ \phi^n
+        \end{bmatrix}\]
+        Here we either inverst the matrix, or assume the solution $\vec{a}_n =(\phi, \cdots, 0)^T$. So, the $\ar(1)$ prediction is 
+        \[P_nX_{n+1} = \phi X_n\]
+        The MSPE for $\ar(1)$ is 
+        \[\mspe_n(1) = \gamma_X(0) - \vec{a}_n^t\gamma(n;1) = \gamma_X(0) - \phi\gamma_X(1) = \frac{\sigma_Z^2}{1-\phi^2} - \phi^2\frac{\sigma_Z^2}{1-\phi^2} = \sigma_Z^2\]
+        }
+\end{example}
+
+\section{Durbin-Levinson Algorithm}
+
+The Durbin-Levinson algorithm avoids computing the inverse of $\Gamma_n$, however the trade of is that we will only predict one step ahead, so only $P_nX_{n+1}$.\\
+
+Assume that $\mu = E(X_t) = 0$, so that $a_0 = 0$, we will write the predictors as 
+\[P_nX_{n+1} = \phi_{n1}X_n + \cdots + \phi_{nn}X_1\]
+So, $a_1 = \phi_{n1}, \ldots, a_n = \phi_{nn}$. If we take $n=1$, we can still use the Yule-Walker formula to get 
+\[\phi_{11} = \gamma_X^{-1}(0)\gamma_X(1) = \rho_X(1)\]
+Taking $n=2$, we want to find coefficients $\phi_{21}, \phi_{22}$ such that
+\[P_2X_3 = \phi_{21}X_2 + \phi_{22}X_2\]
+Similarly to the Yule-Walker procedure, we want to minimize
+\[E[(X_3 - \phi_{21}X_2 - \phi_{22}X_1)^2]\]
+Taking the derivatives with respect to $\phi_{21}, \phi_{22}$,
+\[\begin{cases}
+    E[X_2(X_3 - \phi_{21}X_2 - \phi_{22}X_1)] = 0\\
+    E[X_1(X_3 - \phi_{21}X_2 - \phi_{22}X_1)] = 0
+\end{cases} \rightarrow \begin{cases}
+    \gamma_X(1) - \phi_{21}\gamma_X(0) - \phi_{22}\gamma_X(1) = 0\\
+    \gamma_X(2) - \phi_{21}\gamma_X(1) - \phi_{22}\gamma_X(0) = 0
+\end{cases}\]
+Dividing each equation by $\gamma_X(0)$ gives us 
+\[\begin{cases}
+    \phi_{21} = \rho_X(1) - \phi_{22}\rho_X(1) = \rho_X(1) - \phi_{22}\phi_{11}\\
+    \rho_X(2) - \phi_{21}\rho_X(1) - \phi_{22} = 0
+\end{cases}\]
+Solving these equations gives us 
+\[\begin{cases}
+    \phi_{22} = \frac{\rho_X(2) - \phi_{11}\rho_X(1)}{1-\phi_{11}\rho_X(1)}\\
+    \phi_{21} = \rho_X(1) - \phi_{22}\phi_{11}
+\end{cases}\]
+Note that $\phi_{11}$ and $\rho_X(1)$ is used interchangeablly.
+
+\begin{theorem}[Durbin-Levinson Algorithm]
+    The coefficients $\phi_{n1}, \ldots, \phi_{nn}$ can be computed recursively as 
+    \[\phi_{nn} = \left[\gamma_X(n) = \sum_{j=1}^{n-1}\phi_{n-1,j}\gamma_X(n-j)\right]v_{n-1}^{-1}\]
+    \[\begin{bmatrix}
+        \phi_{n1} \\ \vdots \\ \phi_{n,n-1}
+    \end{bmatrix} = \begin{bmatrix}
+        \phi_{n-1,1}\\ \vdots \\ \phi_{n-1,n-1}
+    \end{bmatrix} - \phi_{nn}\begin{bmatrix}
+        \phi_{n-1,n-1} \\ \vdots \\ \phi_{n-1,1}
+    \end{bmatrix}\]
+    and 
+    \[v_n = v_{n-1}[1-\phi_{nn}^2], \ v_0 = \gamma_X(0), \ \phi_{11} = \rho_X(1)\]
+\end{theorem}
+
+Note that the Durbin-Levinson and Yule-Walker procedures produce the same results since they both compute the coefficients in the linear prediction $P_nX_{n+1}$ using the mean squared error criterion.
+
+\begin{example}
+    \emph{
+        Consider the $\ar(1)$ model $X_t = \phi X_{t-1} + Z_t$, where $Z_t$ are iid with mean 0 and variance $\sigma_Z^2$. The covariance function is given by 
+        \[\gamma_X(h) = \phi^h\frac{\sigma_Z^2}{1-\phi^2}\]
+        The correlation is 
+        \[\rho_X(h) = \frac{\gamma_X(h)}{\gamma_X(0)} = \phi^h\]
+        Using the Durbin-Levinson algorith, we find the coefficients and predictors
+        \[\phi_{11} = \phi, \ P_1 X_2 = \phi X_1\]
+        \[\phi_{22} = 0, \ P_2X_3 = \phi X_2\]
+        Then in general, 
+        \[\phi_{n1} = \phi, \phi_{n2} = \cdots = \phi_{nn} = 0, \ P_nX_{n+1} = \phi X_n\]
+    }
+\end{example}
+
+\subsection{Partial Autocovariance Functions}
+
+The Durbin-Levinson procedure also gives us the partial autocovariance function defined as 
+\[\alpha(0) = 1, \ \alpha(k) = \phi_{kk}, \ k \geq 1\]
+
+\begin{example}
+    \emph{
+        Consider the $\ar(1)$ model $X_t = \phi X_{t-1} + Z_t$, where $Z_t$ are iid with mean 0 and variance $\sigma_Z^2$. The partial autocovariance function is given by
+        \[\alpha(0) = 1, \ \alpha(1) = \phi, \ \alpha(k) = 0, \ k \geq 2\]
+        The partial autocorrelation function vaniches after lag 1. In general, the partial autocorrelation function of an $\ar(p)$ model vanishes after lag $p$.
+    }
+\end{example}
+
+\begin{example}
+    \emph{For the $\ma(1)$ model, the PACF is}
+    \[\alpha(h) = \frac{-(-\theta)^h}{1+\theta^2+\cdots + \theta^{2h}}\]
+\end{example}
+
+\section{Forecast Limits, Prediction Intervals}
+
+We discussed above formulas for predicting values that depend only on the covariances. To assess the accuracy of these predictions, we need to impose some assumptions on the model.\\
+
+Assume that $X_t = \sum_{j=0}^\infty \psi_jZ_{t-j}$ is a linear process with mean $E(Z_t) = 0$ and variance $\Var(Z_t) = \sigma_Z^2$. The mean squared prediction error is
+\[\mspe_n(k) \coloneq E[(X_{n+k} - P_nX_{n+k})^2]\]
+Hence, the theoretical forecase limits are 
+\[P_nX_{n+k} \pm z_{\alpha/2}\sqrt{\mspe_n(k)} = P_nX_{n+k} \pm z_{\alpha/2}\sigma\sqrt{\sum_{j=0}^{k-1}\psi_j^2}\]

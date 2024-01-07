@@ -1,0 +1,37 @@
+\chapter{Maximum Likelihood Estimation}
+
+\begin{definition}
+    The likelihood function of a sequence of iid random variables $\{X_n\}$ with pdf $f(X;\theta)$ is 
+    \[L(\theta) = L(\theta; X_1, \ldots, X_n) = \prod_{i=1}^n f(X_i;\theta) \]
+\end{definition}
+
+The \emph{log-likelihood function} is defined as 
+\[\ell (\theta) = \log L(\theta) = \sum_{i=1}^n \log f(X_i; \theta) \]
+
+\begin{definition}
+    Let 
+    \[\hat{\theta}_{\mle} = \arg\max_\theta L(\theta) = \arg\max_{\theta}\ell(\theta)\]
+\end{definition}
+
+\begin{example}
+    \emph{
+        Let $X_1, \ldots, X_n \iid \exp(\beta)$. Recall that the pdf of an exponential distribution is
+        \[f(x;\beta) = \begin{cases}
+            \frac{1}{\beta}e^{-x/\beta} & x \geq 0 \\
+            0 & x < 0
+        \end{cases}\]
+        The likelihood function is
+        \[L(\beta) = \beta^{-n}\prod_{i=1}^n \exp(-X_i/\beta) = \beta^{-n}\exp\left(-\frac{1}{\beta} \sum_{i=1}^nX_i\right)\]
+        The log-likelihood function is
+        \[\ell(\beta) = -n\log(\beta) - \frac{1}{\beta}\sum_{i=1}^nX_i\]
+        Now we can find the MLE of $\beta$ by taking the derivative of $\ell(\beta)$ and setting it to 0.
+        \[\frac{\partial \ell(\beta)}{\partial\beta} = -n\frac{1}{\beta}+\frac{1}{\beta^2}\sum_{i=1}^nX_i = 0 \implies \hat{\beta}_{\mle} = \bar{X}\]
+    }
+\end{example}
+
+
+\section{Maximum Likelihood Estimation for Time Series Models}
+Let $X_1, \ldots, X_n$ be obserations from a stationary time series, and $f_n(x_1,\ldots, x_n)$ be their joint density. We assume that the time series is Guassian and centered which is an assumption that needs to be checked. We will define the following vectors 
+\[\boldmath{X}_n = (X_1,\ldots,X_n)', \ \boldmath{\hat{X}}_n = (\hat{X}_1, \ldots, \hat{X}_n)', \ \boldmath{U}_n = (U_1, \ldots, X_n)'\]
+where $U_i = X_i - \hat{X}_i$ are known as the \textbf{innovations}. The covariance metrix is defined as $\Gamma_n = E(\boldmath{X}_n'\boldmath{X}_n)$. The likelihood function is
+\[L = \frac{1}{(2\pi)^{n/2}}\frac{1}{|\Gamma_n|^{1/2}}\exp\left(-\frac{1}{2}\boldmath{X}_n'\Gamma_n^{-1}\boldmath{X}_n\right)\]

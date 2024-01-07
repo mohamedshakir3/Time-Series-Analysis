@@ -1,0 +1,318 @@
+
+\chapter{Autoregression Moving-Average (ARMA) Models} 
+
+\section{Linear Processes}
+
+\begin{definition}\label{def:linear_process}
+    Let $\{Z_t\}$ be a sequence of independent random variables with mean zero and variance $\Var(Z_t) = E(Z_t^2) = \sigma_Z^2$. Let $\psi_j, \ j \geq 0$, be a sequence of constants such that $\sum_{j=0}^\infty \psi_j^2 < \infty$. Then, 
+    \[X_t = \sum_{j=0}^\infty \psi_jZ_{t-j}\]
+    is called a linear process (also known as a moving average, or causal moving average, or one-sided moving average).
+\end{definition}
+\noindent
+The condition $\sum_{j=0}^\infty \psi_j^2 < \infty$ is required to ensure that the series converges, so that
+\[E(|X_t|) \leq \sum_{j=0}^\infty |\psi_j| E(|Z_{t-j}|) = E(|Z_0|) \sum_{j=0}^{\infty}|\psi_j| < \infty\]
+
+\begin{lemma}\label{lemma:linear_acf}
+    The linear process is stationary with $E(X_t) = 0$, and 
+    \[\gamma_X(h) = \sigma_Z^2\sum_{j=0}^\infty \psi_j\psi_{j+h}\]
+\end{lemma}
+
+\begin{proof}
+    Since the mean is 0, we have 
+    \[\gamma_X(h) = E(X_tX_{t+h}) = E\left(\sum_{j=0}^\infty \psi_jZ_{t-j}\sum_{i=0}^\infty \psi_iZ_{t+h-i}\right) = \sum_{j=0}^\infty\sum_{i=0}^\infty\psi_j\psi_jE(Z_{t-j}Z_{t+h-j})\]
+    Since the noise variables $Z_t$ are independent with mean 0, the only terms that contribute to the sum are those with $i = j + h$, so this simplies to a single sum.
+    \[\gamma_X(h) = \sum_{j=0}^\infty \psi_j\psi_{j+h}E(Z_{t-j}Z_{t+h-j}) = \sigma_Z^2\sum_{j=0}^\infty \psi_j\psi_{j+h}\]
+\end{proof}
+
+\noindent
+\textbf{Note:} The notation $AR(p)$ indicates an autoregressive model of order $p$.
+
+\begin{example}[AR(1)]\label{ex:ar1_acf}
+    \emph{
+        Let $|\phi| < 1$, and consider the linear process
+        \[X_t = \sum_{j=0}^\infty \phi^jZ_{t-j}\]
+        Here we have $\psi_j = \phi^j$, then applying the above lemma, 
+        \[\gamma_X(h) = \sigma_Z^2\sum_{j=0}^\infty \psi_j\psi_{j+h} = \sigma_Z^2 \sum_{j=0}^\infty \phi^{j}\phi^{j+h} = \sigma^2_Z\frac{\phi^h}{1-\phi^2}\]
+    }
+\end{example}
+
+\begin{example}[MA(q)]\label{ex:maq_acf}
+    \emph{
+        Let 
+        \[X_t = Z_t + \theta_1Z_{t-1} + \cdots + \theta_qZ_{t-q}\]
+        This is a linear processes with $\psi_0 = 1, \psi_1 = \theta_1, \dots, \psi_q = \theta_q$, and $\psi_j = 0$ for $j > q$. Then, for $h = 0, \ldots, q$, 
+        \[\gamma_X(h) = \sigma_Z^2\sum_{j=0}^\infty \theta_j\theta_{j+h} = \sigma_Z^2\sum_{j=0}^{q-h}\theta_j\theta_{j+h}\]
+    }
+\end{example}
+
+\section{ARMA Models}
+
+\subsection{Difference and Backward Operators}
+
+We define the \emph{difference operator} $\nabla$ as 
+\[\nabla X_t = X_t - X_{t-1}\]
+and the backward shift operator as 
+\[BX_t = X_{t-1} \implies B^kX_t = X_{t-k}\]
+
+\begin{example}[AR(1)]
+    \emph{
+        Let $\{Z_t\}$ be a sequence of independent random variables with mean 0 and variacne $\Var(Z_t) = E(Z_t^2) = \sigma_Z^2$. Define the linear process
+        \[X_t = \phi X_{t-1} + Z_t\]
+        This can be equivalently written using the backshift operator $B$ with $BX_t = X_{t-1}$, so 
+        \[X_t = \phi BX_t + Z_t \implies Z_t = (1-\phi B)X_t = \phi(B)X_t \]
+        where $\phi(B) = 1 - \phi B$. 
+    }
+\end{example}
+
+\begin{example}[MA(1)]
+    \emph{
+        Define the linear process
+        \[X_t = Z_t + \theta Z_{t-1} \implies X_t = Z_t + \theta B Z_t = \theta(B)Z_t\]
+        where $\theta(B) = 1 + \theta B$.
+    }
+\end{example}
+
+\begin{example}[ARMA(1,1)]
+    \emph{    
+        The model is defined as 
+        \[X_t - \phi X_{t-1} = Z_t + \theta Z_{t-1}\]
+        Which we can write as
+        \[\phi(B)X_t = \theta(B)Z_t\]
+        where $\phi(B) = 1 - \phi B$ and $\theta(B) = 1 + \theta B$.
+    }
+\end{example}
+
+\begin{definition}
+    Let $\{Z_t\}$ be a sequence of independent random variable with mean zero and variance $\Var(Z_t) = E(Z_t^2) = \sigma_Z^2$. A time series $\{X_t\}$ is called an autoregressive moving average process of order $(p,q)$, denoted by $ARMA(p,q)$, if it solves the equation 
+    \[X_t - \phi_1X_{t-1} - \cdots - \phi_pX_{t-p} = Z_t + \theta_1Z_{t-1} + \cdots + \theta_qZ_{t-q}\]
+    Equivalently, 
+    \[\phi(B)X_t = \theta(B)Z_t\]
+    where 
+    \[\phi(z) = 1 - \phi_1z - \cdots - \phi_pz^p\]
+    \[\theta(z) = 1 + \theta_1z + \cdots + \theta_qz^q\]
+    are autoregressive and moving average polynomials, respectively.
+\end{definition}
+
+\subsection{Solutions to ARMA Models}
+\begin{enumerate}[label=(\roman*)]
+    \item A stationary solution for $\arma(p,q)$ exists whenever the autoregressive polynomial $\phi(z) = 1 - \phi_1z - \cdots - \phi_pz^p \neq 0$ for all $|z| = 1$. In other words, for $\arma$ to be stationary, if $z$ solves $\phi(z) = 0$, then $|z| \neq 1$. For example, if we have the model 
+    \[X_t - 1.1X_{t-1} = Z_t\]
+    The autoregressive polynomial is $\phi(z) = 1-1.1z$, and the only solution to $\phi(z) = 0$ is $z = 1/1.1 \neq 1$. Therefore there exists a stationary solution for this model.
+    \item A stationary and causal solution for $\arma(p,q)$ exists whenever the autoregressive polynomial $\phi(z) = 1 - \phi_1z - \cdots - \phi_pz^p \neq 0$ for all $|z| \leq 1$. In other words, for $\arma$ to be stationary and causal, if $z$ solves $\phi(z) = 0$, then $|z| > 1$. For example, consider the previous model,
+    \[X_t - 1.1X_{t-1} = Z_t\]
+    Then the autoregressive polynomial is $\phi(z) = 1-1.1z$, and the only solution to $\phi(z) = 0$ is $z = 1/1.1 < 1$. Therefore there is no causal solution for this model.
+\end{enumerate}
+
+\begin{example}
+    \emph{
+        Consider the $\ar(2)$ process 
+        \[X_t - 0.1X_{t-1} - 0.4X_{t-2} = Z_t\]
+        Equivalently, we can write this using the backshift operator as 
+        \[X_t - 0.1BX_t - 0.4B^2X_t = Z_t\]
+        So, the autoregressive polynomial is 
+        \[\phi(z) = 1 - 0.1z - 0.4z^2\]
+        The roots of this polynomial are $1.46,-1.71$. Both roots are greater than 1 in absolute value. Therefore, there is a causal and stationary solution for this model.
+    }
+\end{example}
+
+\begin{example}
+    \emph{
+        Consider the $\ar(2)$ process
+        \[(1-B-B^2)X_t = Z_t\]
+        With the autoregressive polynomial $\phi(z) = 1-z-z^2$. The roots of this polynomial are complex,
+        \[z = \frac{-1 \pm i\sqrt{3}}{2}\]
+        Then, the modulus of the roots is
+        \[|z| = \sqrt{1 + 3} = 2\] 
+        Therefore, there exists a stationary and causal solution for this model.
+    }
+\end{example}
+
+\begin{example}
+    \emph{
+        Consider the $\ar(2)$ process 
+        \[X_t - \phi X_{t-1} \phi X_{t-2} = Z_t\]
+        The autoregressive polynomial is
+        \[\phi(z) = 1-\phi z - \phi z^2\]
+        The roots of the polynomial are 
+        \[\frac{\phi \pm \sqrt{\phi^2 + 4\phi}}{2\phi}\]
+        We have to consider the cases where the roots are real and complex.
+        \begin{itemize}
+            \item If $\phi \in (-4,0)$, the roots are complex. Then, the modulus of the roots is 
+            \[\sqrt{\frac{\phi^2 + \phi^2 + 4\phi}{4\phi^2}}\]
+            This is greater than 1 when $2\phi^2 + 4\phi > 4\phi^2$, so 
+            \[2\phi^2 + 4\phi > 4 \phi^2 \iff 0 > 2\phi^2 - 4\phi = 2\phi(\phi-2) \iff 0 < \phi < 2 \]
+            We had the condition that $\phi \in (-4,0)$, so the only solution is $\phi \in (-4,0) \cap (0,2) = \emptyset$. Therefore, there is no causal solution for this model if the roots are complex.
+            \item If $\phi < -4$ or $\phi > 0$, the roots are real. Then, we want to solve 
+            \[\left|\frac{\phi \pm \sqrt{\phi^2 + 4\phi}}{2\phi}\right| > 1 \iff \frac{\phi \pm \sqrt{\phi^2 + 4\phi}}{2\phi} > 1 \text{ or } \frac{\phi \pm \sqrt{\phi^2+4\phi}}{2\phi} < -1\]
+            We will start with the first case when $\phi > 0$,
+            \[\frac{\phi \pm \sqrt{\phi^2 + 4\phi}}{2\phi} > 1 \iff \phi \pm \sqrt{\phi^2 + 4\phi} > 2\phi \iff \pm \sqrt{\phi^2+ 4\phi} > \phi\]
+            \[\frac{\phi \pm \sqrt{\phi^2+4\phi}}{2\phi} < -1 \iff \phi \pm \sqrt{\phi^2+4\phi} < -2\phi \iff \pm \sqrt{\phi^2 + 4\phi} < -3\phi\]
+            We can see for the positive root this always holds when $\phi > 0$ since $\sqrt{\phi^2 + 4\phi} > \sqrt{\phi^2} = \phi$. When $\phi > 0$, $\sqrt{\phi^2+4\phi} > 0$, so the second inequality never holds when $\phi > 0$. Then, for the negative root,
+            \[-\sqrt{\phi^2 + 4\phi} > \phi \iff \sqrt{\phi^2+4\phi} < -\phi\]
+            \[-\sqrt{\phi^2+4\phi} < -3\phi \iff \sqrt{\phi^2 + 4\phi} > 3\phi \iff \phi^2 + 4\phi > 9\phi^2 \iff 0 > 2\phi(\phi-2)\]
+            We can see that the first inequality never holds since $\phi > 0$, and the second inequality holds when $\phi \in (0,2)$. Now, when $\phi < -4$,
+            \[\sqrt{\phi^2 + 4\phi} > \phi\]
+            always holds since the square root will be positive, and 
+            \[\sqrt{\phi^2 + 4\phi} < - 3\phi\]
+            always holds since $\sqrt{\phi^2 + 4\phi} < \sqrt{\phi^2} = \phi < -3\phi$ when $\phi < -4$. Then for the second root, 
+            \[\sqrt{\phi^2 + 4\phi} < -\phi \text{ or } 0 > 2\phi(\phi-2)\]
+            The first inequality always holds for the same reason as the previous root, $\sqrt{\phi^2 + 4\phi} < \sqrt{\phi^2} = \phi$, and the second inequality never holds since $\phi < -4 < 0$, thus $2\phi(\phi-2) > 0$. Therefore, there is a causal solution for this model when $\phi < -4$ or $\phi \in (0,2)$.
+        \end{itemize}
+    }
+    
+\end{example}
+
+\section{Linear Representation for ARMA Models}
+Given an $\arma(p,q)$ model, our objective is to write a linear process as given in 
+\hyperref[def:linear_process]{Definition 3.1.1}. In general, this task is not easy and we will look at some basic models.
+
+\begin{example}[MA(q)]
+    \emph{
+        When $p=0$, $\arma(0,q)$ becomes $\ma(q)$, so it's linear representation is trivial.
+    }
+\end{example}
+
+\begin{example}[AR(1)]\label{ex:ar1}
+    \emph{
+        $\ar(1)$ is obtained by setting $p=1$ and $q=0$, so 
+        \[Z_t = \phi(B)X_t\]
+        where $\phi(z) = 1-\phi z$. Then, we define 
+        \[\chi(z) = \frac{1}{\phi(z)}\]
+        This function has the following power series expansion when $|\phi| < 1$, 
+        \[\chi(z) = \frac{1}{\phi(z)} = \sum_{j=0}^\infty \phi^jz^j\]
+        Multiplying this with our equation for $Z_t$, 
+        \[\chi(B)\phi(B)X_t = \chi(B)Z_t \iff X_t = \chi(B)Z_t\]
+        Thus, our linear representation of $\ar(1)$ is 
+        \[X_t = \chi(B)Z_t = \sum_{j=0}^\infty \phi^jB^jZ_t = \sum_{j=0}^\infty \phi^jZ_{t-j}\]
+        Here we have our linear representation from the definition with $\psi_j = \phi^j$. Notice that this works under the condition that there exists a causal linear representation. If $|\phi| > 1$, then we can still write a linear representation, however it will not be causal.
+    }
+\end{example}
+
+\begin{example}[ARMA(1,1)]\label{ex:linear_arma11}
+    \emph{
+        Similarly to our previous examples, here we have $p=1$ and $q=1$, so
+        \[\phi(B)X_t = \theta(B)Z_t\]
+        where $\phi(z) = 1 - \phi z$ and $\theta(z) = 1 + \theta z$. Then, we define again 
+        \[\chi(z) = \frac{1}{\phi(z)} = \sum_{j=0}^\infty \phi^jz^j\]
+        Multyipling this gives us 
+        \[X_t = \chi(B)\theta(B)Z_t\]
+        So, we can expand this to get 
+        \[X_t = \chi(B)\theta(B)Z_t = \sum_{j=0}^\infty \phi^jB^j(1+\theta B)Z_t = \sum_{j=0}^\infty \phi^jZ_{t-j} + \theta\sum_{j=0}^\infty \phi^jZ_{t-(j+1)}\]
+        Now, we want to write $X_t$ in the form $\sum\limits_{j=0}^\infty \psi_jZ_{t-j}$, so
+        \[\sum_{j=0}^\infty \psi_jZ_{t-j} = \sum_{j=0}^\infty \phi^jZ_{t-j} + \theta\sum_{j=0}^\infty Z_{t-j-1}\]
+        We can rewrite this as 
+        \[\psi_0Z_t = \sum_{j=1}^\infty \psi_jZ_{t-j} = \phi^0Z_t + \sum_{j=1}^\infty (\phi^j + \theta \phi^{j-1})Z_{j-1}\]
+        Hence the linear representation of $\arma(1,1)$ is 
+        \[\psi_0 = 1, \ \psi_j = \phi^{j-1}(\theta + \psi), \ j \geq 1\]
+    }    
+\end{example}
+
+\begin{example}[ARMA(1,q)]
+    \emph{ARMA(1,q) works in the same way as ARMA(1,1).}
+\end{example}
+
+\begin{example}[AR(p)]
+    \emph{
+        The procedure for $\ar(p)$, for $p\geq 2$ does not generalize the same way and is far more complicated. 
+    }
+\end{example}
+
+\section{Autocovariance Function for ARMA Model}
+
+Our goal to find the autocovariance function for an $\arma(p,q)$ model. 
+
+\begin{example}[MA(q)]
+    \emph{
+        For an $\ma(q)$ model, the linear representation is trivial and can be used to evaluate the autocovariance function directly. See \hyperref[ex:maq_acf]{Example 3.1.2}.
+    }
+\end{example}
+
+\begin{example}[AR(1)]
+    \emph{
+        See \hyperref[ex:ar1_acf]{Example 3.1.1}, we have 
+        \[\gamma_X(h) = \sigma_Z^2\frac{\phi^h}{1-\phi^2}\]
+    }
+\end{example}
+
+\begin{example}[ARMA(1,1)]
+    \emph{
+        For $\arma(1,1)$ (this can be generalized for $\arma(1,q)$), we use the linear representation from \hyperref[ex:linear_arma11]{Example 3.3.3}, we have 
+        \[\psi_0 = 1, \ \psi_j = \phi^{j-1}(\phi + \theta), \ j \geq 1\]
+        Then, using \hyperref[lemma:linear_acf]{Lemma 3.1.1}, we have
+        \begin{align*}
+            \gamma_X(0) &= \sigma_Z^2\sum_{j=0}^\infty \psi_j^2 =\sigma_Z^2\psi_0^2 + \sigma_Z^2 \sum_{j=1}^\infty \psi_j^2\\
+            &= \sigma_Z^2 \left(1 + (\psi + \theta)^2 \sum_{j=0}^\infty \psi^{2(j-1)}\right)\\
+            &= \sigma_Z^2 \left(1 + \frac{(\theta + \phi)^2}{1-\phi^2}\right)
+        \end{align*}
+        Similarly for $\gamma_X(1)$, 
+        \[\gamma_X(1) = \sigma_Z^2 \left((\phi + \theta) + \phi \frac{(\theta + \phi)^2}{1-\phi^2}\right)\]
+        In general, $\gamma_X(h) = \phi^{h-1}\gamma_X(1)$ for $h \geq 1$, so the covariance function of $\arma(1,1)$ is
+        \[\gamma_X(h) = \sigma_Z^2\phi^{h-1}\left((\theta+\phi) + \phi \frac{(\phi + \theta)^2}{1-\phi^2}\right), \ h \geq 1\]
+    }
+\end{example}
+
+\begin{example}[AR(1)]
+    \emph{
+        For $\ar(p)$ models, or $\arma(p,q)$ models in general with $p \geq 2$, we apply a recursive method. For example, consider $\ar(1)$, 
+        \[X_t = \phi X_{t-1} + Z_t\]
+        Then multiply both sides by $X_{t-h}$ and take the expected value, 
+        \[E(X_tX_{t-h}) = \phi E(X_{t-1}X_{t-h}) + E(Z_tX_{t-h})\]
+        Since $E(X_t) = 0$, then $E(X_tX_{t-h}) = \gamma_X(h)$, and $E(X_{t-1}X_{t-h}) = \gamma_X(h-1)$. Then, we also have that $Z_t$ is independent of $X_{t-h}$, so $E(Z_tX_{t-h}) = 0$. Therefore, the recursive formula for $\ar(1)$ is 
+        \[\gamma_X(h) = \phi\gamma_X(h-1)\]
+        Or in general, 
+        \[\gamma_X(h) = \phi^{h-1}\gamma_X(0), \ h \geq 1\]
+        We need to compute $\gamma_X(0) = \Var(X_t) = \sigma_X^2$. We have 
+        \[\Var(X_t) = \phi^2\Var(X_{t-1}) + \Var(Z_t)\]
+        Since $X_t$ is stationary, $\Var(X_t) = \Var(X_{t-1}) = \sigma_X^2$, so
+        \[\sigma_X^2 = \phi^2\sigma_X^2 + \sigma_Z^2 \implies \sigma_X^2 = \sigma_Z^2 \frac{1}{1-\phi^2}\]
+        Therefore, 
+        \[\gamma_X(h) = \phi^h\gamma_X(0) = \phi^h \sigma_Z^2\frac{1}{1-\phi^2}\]
+        We can see this is the same as the result from \hyperref[ex:ar1_acf]{Example 3.1.1}.
+    }
+\end{example}
+
+\begin{example}[AR(2)]
+    \emph{
+        Using the same method as the previous example, we have
+        \[X_t = \phi_1X_{t-1} + \phi_2X_{t-2} + Z_t\]
+        Then multiplying both sides by $X_{t-h}$ and taking the expected value,
+        \[E(X_tX_{t-h}) = \phi_1E(X_{t-1}X_{t-h}) + \phi_2E(X_{t-2}X_{t-h}) + E(Z_tX_{t-h})\]
+        This gives us the recursive formula for the covariance of $\ar(2)$ as 
+        \[\gamma_X(h) = \phi_1\gamma_X(h-1) + \phi_2\gamma_X(h-2)\]
+        Again, we need to compute $\gamma_X(0) = \Var(X_t) = \sigma_X^2$ and $\gamma_X(1)$, 
+        \[\gamma_X(h) = \phi_1\gamma_X(h-1) + \phi_2\gamma_X(h-2), \ h\geq 2\]
+        \[\gamma_X(1) = \sigma_Z^2 \frac{\phi_1}{(1+\phi_2)((1-\phi_2)^2-\phi_1^2)}\]
+        \[\gamma_X(0) = \sigma_Z^2 \frac{1-\phi_2}{(1+\phi_2)((1-\phi_2)^2-\phi_1^2)}\]
+    }    
+\end{example}
+
+\begin{example}[AR(3)]
+    \emph{The recursive formula for the covariance of $\ar(3)$ is}
+    \[\gamma_X(h) = \phi_1\gamma_X(h-1) + \phi_2\gamma_X(h-2) + \phi_3\gamma_X(h-3)\]
+\end{example}
+
+\subsection{Partial Autocorrelation for ARMA Models}
+
+Recall the definition for the partial autocorrelation function (PACF). Given a time series $\{X_t\}$, the partial autocorrelation at lag $h$, denoted by $\alpha(h)$, is the autocorrelation between $X_t$ and $X_{t+h}$ with the linear dependence of $X_t$ on $X_{t+1}, \ldots, X_{t+h-1}$ removed.
+
+
+\begin{example}[PACF for MA(1)]
+    \emph{
+        For $\ma(1)$ models, we have already calculated $\alpha(2)$. The PACF in general is 
+        \[\alpha(h) = \frac{-(-\theta)^h}{1 + \theta^2 + \cdots + \theta^{2h}}\]
+    }
+\end{example}
+
+\begin{example}[PACF for AR(1)]
+    \emph{
+        Consider the $\ar(1)$ model $X_t = \phi X_{t-1} + Z_t$. Then, the PACF is
+        \[\alpha(1) = \rho_X(1) = \phi\]
+        \[\alpha(2) = \Cor(X_0, X_2 - \phi X_1) = \Cor(X_0, \phi X_1 + Z_2 - \phi X_1) = \Cor(X_0, Z_2) = 0\]
+    }
+\end{example}
+
+
+\begin{theorem}
+    Consider the stationary $\ar(p)$ time series. Then 
+    \[\alpha(h) = 0, \ h = p+1, p + 2, \ldots\]
+\end{theorem}

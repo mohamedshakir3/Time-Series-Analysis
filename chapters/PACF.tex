@@ -1,0 +1,15 @@
+\chapter{Sample Mean, Sample Autocorrelation, Sample PACF}
+
+Let $\{X_t\}$ be a stationary time series, then 
+\begin{itemize}
+    \item The mean $\mu = E(X_0) = E(X_t)$ can be estimated with the sample mean
+    \[\hat{\mu} = \bar{X} = \frac{1}{n}\sum_{i=1}^n X_i\]
+    \item The variance $\sigma_X^2 = \Var(X) = E[(X-\mu)^2]$ can be estimated with the sample variance
+    \[\hat{\sigma}_X^2 = \hat{\gamma}_X(0) = \frac{1}{n-1}\sum_{i=1}^n(X_i-\bar{X})^2\]
+    \item The (auto)covariance $\gamma_X(h) = E[(X_0 - \mu)(X_h - \mu)]$ can be estimated with the sample (auto)covariance
+    \[\hat{\gamma}_X(h) = \frac{1}{n-1}\sum_{t=1}^{n-h}(X_t - \bar{X})(X_{t+h} - \bar{X})\]
+    \item The (auto)correlation $\rho_X(h) = \frac{\gamma_X(h)}{\gamma_X(0)}$ can be estimated with the sample (auto)correlation 
+    \[\hat{\rho}_X(h) = \frac{\hat{\gamma}_X(h)}{\hat{\gamma}_X(0)}\]
+    \item The partial autocorrelation function (PACF) is estimated by the sample PACF. For example,
+    \[\alpha(2) = \frac{\rho_X(2) - \rho^2_X(1)}{1-\rho_X^2(1)} \implies \hat{\alpha}(2) = \frac{\hat{\rho}_X(2) - \hat{\rho}_X^2 (1)}{1 - \hat{\rho}_X^2(1)}\]
+\end{itemize}

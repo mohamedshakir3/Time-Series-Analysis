@@ -1,0 +1,139 @@
+
+
+\chapter{Estimation in ARMA Models}
+
+Suppose we have observations $\{X_1, \ldots, X_n\}$ from a time series with a known model, say $\arma(p,q)$, our goal is to estimate the parameters in $\phi_1,\ldots,\phi_p$, and $\theta_1,\ldots,\theta_q$. 
+
+
+\section{Estimation of the Mean}
+
+We assume the mean of our stationary process is 0, however in practice the mean is not known and is not typically 0. We will estimate the mean using the sample mean, $\bar{X}$.\\
+
+Assume that $X_1,\ldots,X_n$ are iid, then 
+\[E(\bar{X}) = E\left(\frac{1}{n}\sum_{i=1}^n X_i\right) = \frac{1}{n}E\left(\sum_{i=1}^n X_i\right) = \frac{1}{n}n\mu = \mu\]
+
+From independence, we also have
+\[\Var(\bar{X}) = \Var\left(\frac{1}{n}\sum_{i=1}^n X_i\right) = \frac{1}{n^2} \Var\left(\sum_{i=1}^n X_i\right) = \frac{\gamma_X(0)}{n}\]
+
+\begin{lemma}
+    Assume that $X_1,\ldots, X_n$ are independent and identically distributed with mean $\mu$ and variance $\gamma_X(0) = \sigma^2$. Then 
+    \[\frac{\sqrt{n}(\bar{X}-\mu)}{\sigma} \cond N(0,1)\]
+    That is, 
+    \[\lim_{n\rightarrow \infty} P\left(\sqrt{n} \frac{\bar{X}-\mu}{\sigma}\leq x\right) = \Phi(x)\]
+    where $\Phi$ is the cdf of the standard normal distribution.
+\end{lemma}
+
+This allows us to construct confidence intervals for the mean 
+\[\left(\bar{X} - z_{\alpha/2} \frac{\sqrt{\gamma_X(0)}}{\sqrt{n}}, \bar{X} + z_{\alpha/2} \frac{\sqrt{\gamma_X(0)}}{\sqrt{n}}\right)\]
+
+When dealing with time series, we are not using iid random variables. Suppose we have observations $\{X_1,\ldots, X_n\}$ from a stationary time series. The sample mean still remains an unbiased estimator, however the variance of the sample mean becomes 
+\begin{align*}
+    \Var(\bar{X}) &= \Cov(\bar{X}, \bar{X}) = \Cov\left(\frac{X_1 + \cdots + X_n}{n}, \frac{X_1 + \cdots + X_n}{n}\right)\\
+    &= \frac{1}{n^2}\sum_{i=1}^n \sum_{j=1}^n \Cov(X_i,X_j) = \frac{1}{n^2}\sum_{i=1}^n \sum_{j=1}^n \gamma_X(i-j)\\
+    &= \frac{1}{n^2}\sum_{h=-(n-1)}^{n-1} (n-|h|)\gamma_X(h) = \frac{1}{n^2}\sum_{h=-n}^n (n-|h|)\gamma_X(h)\\
+    &= \frac{1}{n}\sum_{h=-n}^n \left(1-\frac{|h|}{n}\right)\gamma_X(|h|)
+\end{align*}
+
+\begin{lemma}
+    Assume that $X_1, \ldots, X_n$ is a stationary time series with mean $\mu$ and variance $\gamma_X(0)$ and the covariance function $\gamma_X(h)$. Then 
+    \[\sqrt{n}\left(\frac{\bar{X}-\mu}{\nu}\right) \cond N(0,1)\]
+    where 
+    \[\nu^2 = \gamma_X(0) + 2\sum_{h=1}^\infty \gamma_X(h)\]
+\end{lemma}
+
+This allows us to construct confidence intervals for the mean 
+\[\left(\bar{X} - z_{\alpha/2}\frac{\nu}{\sqrt{n}}, \bar{X} + z_{\alpha/2}\frac{\nu}{\sqrt{n}}\right)\]
+
+\begin{example}
+    \emph{
+        Consider the $\ar(1)$ model
+        \[X_t = \phi X_{t-1} + Z_t\]
+        In order to obtain a linear representation of the model, we need to have that the mean is 0. We can do this by subtracting the mean from the model, so
+        \[X_t - \mu = \phi(X_{t-1} - \mu) + Z_t\]
+        The stationary solution is then 
+        \[X_t = \mu + \sum_{j=0}^\infty \phi^j Z_{t-j}\]
+        The covariance function is
+        \[\gamma_X(h) = \sigma_Z^2\frac{\phi^h}{1-\phi^2}\]
+        Thus, the unknown $\nu$ is 
+        \[\nu^2 = \gamma_X(0) + 2\sum_{h=1}^\infty \gamma_X(h) = \sigma_Z^2\frac{1}{1-\phi^2} + 2\sigma_Z^2\frac{1}{1-\phi^2}\frac{1}{1-\phi} = \phi_Z^2\frac{1}{(1-\phi)^2}\]
+    }
+\end{example}
+
+\section{Yuke-Walker Estimator}
+
+This method works well for $\ar(p)$ models. We will start with $\ar(1)$,
+\[X_t = \phi X_{t-1} + Z_t\]
+with $|\phi| < 1$, and $E(Z_t) = 0$, $\Var(Z_t) = \sigma_Z^2$. The model is stationary and casual. Multiplying both sides by $X_{t-1}$ and $X_t$ we get 
+\[X_tX_{t-1} = \phi X_{t-1} X_{t-1} + Z_tX_{t-1}\]
+\[X_t^2 = \phi X_t X_{t-1} + X_t Z_t\]
+Now, using the fact that the time series is casual, we have $E(X_t) = 0$ and $X_{t-1}$ is independent of $Z_t$. So, applying the expected value,
+\[\gamma_X(1) = \phi \gamma_X(0) + 0\]
+\[\gamma_X(0) = \phi \gamma_X(1) + E(X_tZ_t)\]
+Note that 
+\[E(X_tZ_t) = E[(\phi X_{t-1}+Z_t)Z_t] = \phi E[X_{t-1}Z_t] + E(Z_t^2) = \sigma_Z^2\]
+We get the system of equations 
+\[\begin{cases}
+    \gamma_X(0)\phi = \gamma_X(1)\\
+    \sigma_Z^2 = \gamma_X(0) - \phi \gamma_X(1)
+\end{cases}\]
+
+Now, for $\ar(2)$, 
+\[X_t = \phi_1 X_{t-1} + \phi_2 X_{t-2} + Z_t\]
+Multiplying $X_{t-2}$, $X_{t-1}$, $X_t$, we get 
+\[X_tX_{t-2} - \phi_1 X_{t-1}X_{t-2} - \phi_2 X_{t-2}^2 = Z_tX_{t-2}\]
+\[X_tX_{t-1} - \phi_1 X_{t-2}^2 - \phi_2X_{t-2}X_{t-1} = Z_tX_{t-1}\]
+\[X_t^2 - \phi_1X_{t-1}X_t - \phi_2X_{t-1}X_t = X_tZ_t\]
+Applying the expected value, we get
+\[\gamma_X(1) - \phi_1\gamma_X(1) - \phi_2\gamma_X(0) = 0\]
+\[\gamma_X(1) - \phi_1\gamma_X(0) - \phi_2\gamma_X(1) = 0\]
+\[\gamma_X(0) - \phi_1\gamma_X(1) - \phi_2\gamma_X(2) = \sigma_Z^2\]
+The variance-covariance matrix is 
+\[\gamma_p = [\gamma_X(i-j)]^p_{i,j=1}\]
+With vectors 
+\[\vec{\phi}_p = \begin{bmatrix}
+    \phi_1 \\ \vdots \\ \phi_p
+\end{bmatrix}, \ \gamma_{X,p} = \begin{bmatrix}
+    \gamma_X(1) \\ \vdots \\ \gamma_X(p)
+\end{bmatrix}\]
+Recall that for $p=1$, $\Gamma_1 = \gamma_X(0)$, and for $p=2$ 
+\[\Gamma_2 = \begin{bmatrix}
+    \gamma_X(0) & \gamma_X(1) \\
+    \gamma_X(-1) & \gamma_X(0)
+\end{bmatrix} = \begin{bmatrix}
+    \gamma_X(0) & \gamma_X(1) \\
+    \gamma_X(1) & \gamma_X(0)
+\end{bmatrix}\]
+Then, we can rewrite the system of equations as                            
+\[\Gamma_p\vec{\phi}_p = \gamma_{X,p}, \ \sigma_Z^2 = \gamma_X(0) - \vec{\phi}^t_p \gamma_{X,p}\]
+These equations Yule-Walker equations, and they involve the autocovariances that are unknown. These equations are combined with the method of moments, so the means are replaced my the sample means and and the covariance is replaced with the sample autocovariance. Thus, the Yule-Walker estimators are 
+\[\vec{\hat{\phi}}_p = \hat{\Gamma}_p^{-1}\hat{\gamma}_{X,p}, \ \hat{\sigma}_Z^2 = \hat{\gamma}_X(0) - \vec{\hat{\phi}}^t_p \hat{\gamma}_{X,p}\]
+
+
+\begin{theorem}
+    For a large $n$, the Yule-Walker estimators are approximately normally distributed 
+    \[\vec{\hat{\phi}}_p \sim N\left(\vec{\phi}_p, \frac{1}{n}\sigma_Z^2\Gamma_p^{-1}\right)\]
+    For $p=1$, 
+    \[\hat{\phi} \sim N\left(\phi, \frac{1}{n}\sigma_Z^2\gamma_X^{-1}\right)\]
+    That is, 
+    \[\Var(\hat{\phi}) \sim \frac{1}{n}\sigma_Z^2 \gamma_X^{-1}(0)\]
+\end{theorem}
+
+\begin{example}[Confidence Intervals for $\ar(1)$]
+    \emph{
+        When $p=1$, the confidence interval for the parameter $\phi$ of $\ar(1)$ is 
+        \[\hat{\phi} \pm z_{\alpha/2}\frac{1}{\sqrt{n}}\sigma_Z\sqrt{\gamma_X^{-1}(1)}\]
+        Here we use the sample estimates for $\sigma_Z^2$ and $\gamma_X(0)$. Hence, the confidence intervals for $\phi$ are
+        \[\hat{\phi} \pm z_{\alpha/2} \frac{1}{\sqrt{n}} \hat{\sigma}_Z\sqrt{\gamma_X(0)^{-1}}\]
+        with 
+        \[\hat{\phi} = \frac{\hat\gamma_X(1)}{\hat\gamma_X(0)}, \ \hat{\sigma}_Z^2 = \hat{\gamma}_X(0) - \hat{\phi}\hat{\gamma}_X(1)\]
+        }
+\end{example}
+
+\begin{example}
+    \emph{
+        For the $\ar(2)$ model,
+        \[X_t = \phi_1 X_{t-1} + \phi_2 X_{t-2} + Z_t\]
+        The confidence intervals for $\phi_1$ and $\phi_2$ are
+        \[\hat{\phi}_1 \pm z_{\alpha/2}\frac{1}{\sqrt{n}}\sqrt{1-\hat{\phi}_1^2}, \ \hat{\phi}_2 \pm z_{\alpha/2}\frac{1}{\sqrt{n}}\sqrt{1-\hat{\phi}_2^2}\]
+    }
+\end{example}
