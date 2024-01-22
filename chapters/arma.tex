@@ -201,7 +201,7 @@ Given an $\arma(p,q)$ model, our objective is to write a linear process as given
         Now, we want to write $X_t$ in the form $\sum\limits_{j=0}^\infty \psi_jZ_{t-j}$, so
         \[\sum_{j=0}^\infty \psi_jZ_{t-j} = \sum_{j=0}^\infty \phi^jZ_{t-j} + \theta\sum_{j=0}^\infty Z_{t-j-1}\]
         We can rewrite this as 
-        \[\psi_0Z_t = \sum_{j=1}^\infty \psi_jZ_{t-j} = \phi^0Z_t + \sum_{j=1}^\infty (\phi^j + \theta \phi^{j-1})Z_{j-1}\]
+        \[\psi_0Z_t + \sum_{j=1}^\infty \psi_jZ_{t-j} = \phi^0Z_t + \sum_{j=1}^\infty (\phi^j + \theta \phi^{j-1})Z_{j-1}\]
         Hence the linear representation of $\arma(1,1)$ is 
         \[\psi_0 = 1, \ \psi_j = \phi^{j-1}(\theta + \psi), \ j \geq 1\]
     }    
@@ -241,12 +241,21 @@ Our goal to find the autocovariance function for an $\arma(p,q)$ model.
         Then, using \hyperref[lemma:linear_acf]{Lemma 3.1.1}, we have
         \begin{align*}
             \gamma_X(0) &= \sigma_Z^2\sum_{j=0}^\infty \psi_j^2 =\sigma_Z^2\psi_0^2 + \sigma_Z^2 \sum_{j=1}^\infty \psi_j^2\\
-            &= \sigma_Z^2 \left(1 + (\psi + \theta)^2 \sum_{j=0}^\infty \psi^{2(j-1)}\right)\\
+            &= \sigma_Z^2 \left(1 + (\phi + \theta)^2 \sum_{j=0}^\infty \phi^{2(j-1)}\right)\\
             &= \sigma_Z^2 \left(1 + \frac{(\theta + \phi)^2}{1-\phi^2}\right)
         \end{align*}
         Similarly for $\gamma_X(1)$, 
         \[\gamma_X(1) = \sigma_Z^2 \left((\phi + \theta) + \phi \frac{(\theta + \phi)^2}{1-\phi^2}\right)\]
-        In general, $\gamma_X(h) = \phi^{h-1}\gamma_X(1)$ for $h \geq 1$, so the covariance function of $\arma(1,1)$ is
+        In general, $\gamma_X(h) = \phi^{h-1}\gamma_X(1)$ for $h \geq 1$, so the covariance function of $\arma(1,1)$ can be derived as
+        \begin{align*}
+            \gamma_X(h) &= \sigma_Z^2\sum_{j=0}^\infty \psi_j\psi_{j+h} = \sigma_Z^2\psi_0\psi_h + \sigma_Z^2 \sum_{j=1}^\infty \psi_j\psi_{j+h}\\
+            &= \sigma_Z^2\left(\phi^{h-1}(\phi + \theta) + (\phi + \theta)^2\sum_{j=1}^\infty\phi^{j-1}\phi^{j+h-1}\right)\\
+            &=\sigma_Z^2\left(\phi^{h-1}(\phi + \theta) + (\phi + \theta)^2\sum_{j=1}^\infty\phi^{j-1 + j - 1}\phi^{h}\right)\\
+            &=\sigma_Z^2\left(\phi^{h-1}(\phi + \theta) + \phi^h(\phi + \theta)^2\sum_{j=1}^\infty\phi^{2(j-1)}\right)\\
+            &=\sigma_Z^2\phi^{h-1}\left((\phi + \theta) + \phi(\phi + \theta)^2\sum_{j=1}^\infty\phi^{2(j-1)}\right)\\
+            &= \sigma_Z^2\phi^{h-1}\left((\phi + \theta) + \phi\frac{(\phi + \theta)^2}{1-\phi^2}\right)\\
+        \end{align*}
+        Thus, the covariance function of $\arma(1,1)$ is
         \[\gamma_X(h) = \sigma_Z^2\phi^{h-1}\left((\theta+\phi) + \phi \frac{(\phi + \theta)^2}{1-\phi^2}\right), \ h \geq 1\]
     }
 \end{example}

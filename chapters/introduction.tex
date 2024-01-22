@@ -140,6 +140,9 @@ Note that we denote $\mu_X(t)$ by $\mu(t)$ and $\gamma_X(t,s)$ as $\gamma(t,s)$.
     }
 \end{example}
 
+\noindent
+\textbf{Note.} Any time series with trend is not stationary.
+
 \begin{example}
     \emph{
         Let $\{Z_t\}$ be a sequence of iid random variables with mean 0 and variance $\sigma_Z^2$. Define 
@@ -191,7 +194,7 @@ Suppose we want to find the partial autocorrelation function of $X_1$ and $X_2$ 
     \item Then similarily, we regress $X_2$ on $X_3$, 
     \[X_2 = \beta_{23}X_3 + V\]
     and find 
-    \[\beta_{23} = \frac{\gamma_X(1)}{\gamma_X(0)} = \rho_X(2)\]
+    \[\beta_{23} = \frac{\gamma_X(1)}{\gamma_X(0)} = \rho_X(1)\]
     \item Finally, we define the partial autocorrelation function (PACF) between $X_1$ and $X_2$ when removing the effect of $X_3$ as
     \[\rho_{12.3} = \Cor(X_1 - \beta_{13}X_3, X_2-\beta_{23}X_3) = \frac{\Cov(X_1 - \beta_{13}X_3, X_2 - \beta_{23}X_3)}{\sqrt{\Var(X_1-\beta_{13}X_3)}\sqrt{\Var(X_2-\beta_{23}X_3)}}\]
     We can rewrite the covariance as 
