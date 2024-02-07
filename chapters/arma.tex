@@ -1,5 +1,5 @@
 
-\chapter{Autoregression Moving-Average (ARMA) Models} 
+\chapter{Autoregressive Moving-Average (ARMA) Models} 
 
 \section{Linear Processes}
 
@@ -18,7 +18,9 @@ The condition $\sum_{j=0}^\infty \psi_j^2 < \infty$ is required to ensure that t
 \end{lemma}
 
 \begin{proof}
-    Since the mean is 0, we have 
+    We can show easily that the expected value of $X_t$ is 0,
+    \[E(X_t) = \sum_{i=1}^\infty E(\psi_jZ_{t-j}) = \sum_{i=1}^\infty \psi_jE(Z_{t-j}) = 0\]
+    Since $E(Z_t) = 0$. Then, we have 
     \[\gamma_X(h) = E(X_tX_{t+h}) = E\left(\sum_{j=0}^\infty \psi_jZ_{t-j}\sum_{i=0}^\infty \psi_iZ_{t+h-i}\right) = \sum_{j=0}^\infty\sum_{i=0}^\infty\psi_j\psi_jE(Z_{t-j}Z_{t+h-j})\]
     Since the noise variables $Z_t$ are independent with mean 0, the only terms that contribute to the sum are those with $i = j + h$, so this simplies to a single sum.
     \[\gamma_X(h) = \sum_{j=0}^\infty \psi_j\psi_{j+h}E(Z_{t-j}Z_{t+h-j}) = \sigma_Z^2\sum_{j=0}^\infty \psi_j\psi_{j+h}\]
@@ -130,7 +132,7 @@ and the backward shift operator as
 \begin{example}
     \emph{
         Consider the $\ar(2)$ process 
-        \[X_t - \phi X_{t-1} \phi X_{t-2} = Z_t\]
+        \[X_t - \phi X_{t-1} - \phi X_{t-2} = Z_t\]
         The autoregressive polynomial is
         \[\phi(z) = 1-\phi z - \phi z^2\]
         The roots of the polynomial are 
@@ -199,11 +201,11 @@ Given an $\arma(p,q)$ model, our objective is to write a linear process as given
         So, we can expand this to get 
         \[X_t = \chi(B)\theta(B)Z_t = \sum_{j=0}^\infty \phi^jB^j(1+\theta B)Z_t = \sum_{j=0}^\infty \phi^jZ_{t-j} + \theta\sum_{j=0}^\infty \phi^jZ_{t-(j+1)}\]
         Now, we want to write $X_t$ in the form $\sum\limits_{j=0}^\infty \psi_jZ_{t-j}$, so
-        \[\sum_{j=0}^\infty \psi_jZ_{t-j} = \sum_{j=0}^\infty \phi^jZ_{t-j} + \theta\sum_{j=0}^\infty Z_{t-j-1}\]
+        \[\sum_{j=0}^\infty \psi_jZ_{t-j} = \sum_{j=0}^\infty \phi^jZ_{t-j} + \theta\sum_{j=0}^\infty\phi^j Z_{t-j-1}\]
         We can rewrite this as 
         \[\psi_0Z_t + \sum_{j=1}^\infty \psi_jZ_{t-j} = \phi^0Z_t + \sum_{j=1}^\infty (\phi^j + \theta \phi^{j-1})Z_{j-1}\]
         Hence the linear representation of $\arma(1,1)$ is 
-        \[\psi_0 = 1, \ \psi_j = \phi^{j-1}(\theta + \psi), \ j \geq 1\]
+        \[\psi_0 = 1, \ \psi_j = \phi^{j-1}(\theta + \phi), \ j \geq 1\]
     }    
 \end{example}
 
@@ -259,7 +261,7 @@ Our goal to find the autocovariance function for an $\arma(p,q)$ model.
         \[\gamma_X(h) = \sigma_Z^2\phi^{h-1}\left((\theta+\phi) + \phi \frac{(\phi + \theta)^2}{1-\phi^2}\right), \ h \geq 1\]
     }
 \end{example}
-
+\subsection{Recurisve Method for Computing Autocovariance Function}
 \begin{example}[AR(1)]
     \emph{
         For $\ar(p)$ models, or $\arma(p,q)$ models in general with $p \geq 2$, we apply a recursive method. For example, consider $\ar(1)$, 
@@ -269,7 +271,7 @@ Our goal to find the autocovariance function for an $\arma(p,q)$ model.
         Since $E(X_t) = 0$, then $E(X_tX_{t-h}) = \gamma_X(h)$, and $E(X_{t-1}X_{t-h}) = \gamma_X(h-1)$. Then, we also have that $Z_t$ is independent of $X_{t-h}$, so $E(Z_tX_{t-h}) = 0$. Therefore, the recursive formula for $\ar(1)$ is 
         \[\gamma_X(h) = \phi\gamma_X(h-1)\]
         Or in general, 
-        \[\gamma_X(h) = \phi^{h-1}\gamma_X(0), \ h \geq 1\]
+        \[\gamma_X(h) = \phi^{h}\gamma_X(0), \ h \geq 1\]
         We need to compute $\gamma_X(0) = \Var(X_t) = \sigma_X^2$. We have 
         \[\Var(X_t) = \phi^2\Var(X_{t-1}) + \Var(Z_t)\]
         Since $X_t$ is stationary, $\Var(X_t) = \Var(X_{t-1}) = \sigma_X^2$, so
@@ -287,11 +289,41 @@ Our goal to find the autocovariance function for an $\arma(p,q)$ model.
         Then multiplying both sides by $X_{t-h}$ and taking the expected value,
         \[E(X_tX_{t-h}) = \phi_1E(X_{t-1}X_{t-h}) + \phi_2E(X_{t-2}X_{t-h}) + E(Z_tX_{t-h})\]
         This gives us the recursive formula for the covariance of $\ar(2)$ as 
-        \[\gamma_X(h) = \phi_1\gamma_X(h-1) + \phi_2\gamma_X(h-2)\]
-        Again, we need to compute $\gamma_X(0) = \Var(X_t) = \sigma_X^2$ and $\gamma_X(1)$, 
-        \[\gamma_X(h) = \phi_1\gamma_X(h-1) + \phi_2\gamma_X(h-2), \ h\geq 2\]
-        \[\gamma_X(1) = \sigma_Z^2 \frac{\phi_1}{(1+\phi_2)((1-\phi_2)^2-\phi_1^2)}\]
-        \[\gamma_X(0) = \sigma_Z^2 \frac{1-\phi_2}{(1+\phi_2)((1-\phi_2)^2-\phi_1^2)}\]
+        \[\gamma_X(h) = \phi_1\gamma_X(h-1) + \phi_2\gamma_X(h-2)\tag{1}\label{(1)}\]
+        Now we start the recursive process to find the covariance function by first computing $\gamma_X(0)$, and $\gamma_X(1)$. We have that $\gamma_X(0) = \Var(X_t) = \sigma_X^2$, and we can compute $\gamma_X(1)$ by multiplying both sides by $X_{t-1}$ and taking the expected value,
+        \[E(X_tX_{t-1}) = \phi_1E(X_{t-1}X_{t-1}) + \phi_2E(X_{t-2}X_{t-1}) + E(Z_tX_{t-1}) \iff \gamma_X(1) = \phi_1\gamma_X(0) + \phi_2\gamma_X(1) \]
+        We can rewrite this as 
+        \[\gamma_X(1) = \gamma_X(0)\frac{\phi_1}{1 - \phi_2}\]
+        Now we need to compute $\gamma_X(0)$, so we multiply both sides by $X_t$ and compute the expected value 
+        \[E(X_tX_t) = \phi_1E(X_tX_{t-1}) + \phi_2E(X_tX_{t-2}) + E(X_tZ_t)\]
+        Now we cannot say $E(X_tZ_t) = 0$ since $X_t$ is not independent of $Z_t$, so we can compute this as follows 
+        \[E(Z_tX_t) = E(Z_t(\phi_1X_{t-1} + \phi_2X_{t-2} + Z_t)) = \phi_1E(Z_tX_{t-1}) + \phi_2E(Z_tX_{t-2}) + E(Z_t^2) = \sigma_Z^2\]
+        Now we can compute $\gamma_X(0)$,
+        \[E(X_tX_t) = \gamma_X(0) = \phi_1\gamma_X(1) +  \phi_2\gamma_X(2) + \sigma_Z^2\]
+        We can use the recursive formula ($\ref{(1)}$) to compute $\gamma_X(2)$,
+        \[\gamma_X(2) = \phi_1\gamma_X(1) + \phi_2\gamma_X(0)\]
+        This gives us 
+        \[\gamma_X(0) = \phi_1\gamma_X(1) + \phi_2\gamma_X(2)  + \sigma_Z^2 = \phi_1\gamma_X(1) + \phi_2(\phi_1\gamma_X(1) + \phi_2\gamma_X(0)) + \sigma_Z^2\]
+        Now we have 2 equations with 2 unknowns, $\gamma_X(0)$ and $\gamma_X(1)$, so we can solve the system 
+        \[\begin{cases}
+            \gamma_X(0) = \gamma_X(1)\frac{1-\phi_2}{\phi_1} \\
+            \gamma_X(0) = \phi_1\gamma_X(1) + \phi_2(\phi_1\gamma_X(1) + \phi_2\gamma_X(0)) + \sigma_Z^2 
+        \end{cases}\]
+        Now we can subtract the second equation from the first to get 
+        \begin{align*}
+            0 &= \gamma_X(1)\frac{1-\phi_2}{\phi_1} - \phi_1\gamma_X(1) - \phi_2(\phi_1\gamma_X(1) + \phi_2\gamma_X(0)) - \sigma_Z^2\\
+            &= \gamma_X(1)\frac{1-\phi_2}{\phi_1} - \phi_1\gamma_X(1) - \phi_2\phi_1\gamma_X(1) + \phi_2^2\gamma_X(0) - \sigma_Z^2\\
+            &= \gamma_X(1)\left(\frac{1-\phi_2}{\phi_1} - \phi_1 - \phi_2\phi_1\right) - \phi_2^2\gamma_X(0) - \sigma_Z^2\\
+            &= \gamma_X(1)\left(\frac{1-\phi_2 -\phi_1^2 - \phi_2\phi_1^2}{\phi_1}\right) - \phi_2^2\gamma_X(0) - \sigma_Z^2\\
+            &= \frac{\phi_1}{1-\phi_2}\gamma_X(0)\left(\frac{1-\phi_2 -\phi_1^2 - \phi_2\phi_1^2}{\phi_1}\right) - \phi_2^2\gamma_X(0) - \sigma_Z^2\\
+            &= \gamma_X(0)\left(\frac{1-\phi_2-\phi_1^2 - \phi_2\phi_1^2}{1-\phi_2}\right) - \phi_2^2\gamma_X(0) - \sigma_Z^2\\
+            &= \gamma_X(0)\left(\frac{1-\phi_2 -\phi_1^2-\phi_2\phi_1^2}{1-\phi_2} - \phi_2^2\right) - \sigma_Z^2\\
+            &= \gamma_X(0)\left(\frac{1-\phi_2-\phi_1^2-\phi_2\phi_1^2-\phi_2^2(1-\phi_2)}{1-\phi_2}\right) - \sigma_Z^2\\
+            \gamma_X(0) &= \sigma_Z^2 \frac{1-\phi_2}{1-\phi_2-\phi_1^2-\phi_2\phi_1^2-\phi_2^2(1-\phi_2)}\\
+                        &= \sigma_Z^2 \frac{1-\phi_2}{(1+\phi_2)((1-\phi_2)^2 - \phi_1^2)}
+        \end{align*}
+        Then using our equation for $\gamma_X(1)$, we have
+        \[\gamma_X(1) = \sigma_Z^2 \frac{\phi_1}{(1+\phi_2)((1-\phi_2)^2 - \phi_1^2)}\]
     }    
 \end{example}
 
@@ -316,7 +348,11 @@ Recall the definition for the partial autocorrelation function (PACF). Given a t
     \emph{
         Consider the $\ar(1)$ model $X_t = \phi X_{t-1} + Z_t$. Then, the PACF is
         \[\alpha(1) = \rho_X(1) = \phi\]
-        \[\alpha(2) = \Cor(X_0, X_2 - \phi X_1) = \Cor(X_0, \phi X_1 + Z_2 - \phi X_1) = \Cor(X_0, Z_2) = 0\]
+        Then for $\alpha(2)$, we can see that the numerator is 
+        \[\Cor(X_1,X_3) - \Cor(X_1,X_2)\Cor(X_2,X_3) = \rho_X(2) - \rho_X(1)\rho_X(1)\]
+        Now note that the autocorrelation function at lag $h$ for $\ar(1)$ is 
+        \[\rho_X(h) = \phi^h\]
+        Therefore, the numerator becomes $\phi^2 - \phi\phi = 0$, so $\alpha(2) = 0$.
     }
 \end{example}
 
