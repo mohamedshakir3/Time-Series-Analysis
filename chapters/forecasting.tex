@@ -62,7 +62,7 @@ The mean square prediction error depends on $k$, meaning that predictions made f
         \end{bmatrix} = \frac{\sigma_Z^2}{1-\phi^2}\begin{bmatrix}
             \phi \\ \vdots \\ \phi^n
         \end{bmatrix}\]
-        Here we either inverst the matrix, or assume the solution $\vec{a}_n =(\phi, \cdots, 0)^T$. So, the $\ar(1)$ prediction is 
+        Here we either invert the matrix, or assume the solution $\vec{a}_n =(\phi, \cdots, 0)^T$. So, the $\ar(1)$ prediction is 
         \[P_nX_{n+1} = \phi X_n\]
         The MSPE for $\ar(1)$ is 
         \[\mspe_n(1) = \gamma_X(0) - \vec{a}_n^t\gamma(n;1) = \gamma_X(0) - \phi\gamma_X(1) = \frac{\sigma_Z^2}{1-\phi^2} - \phi^2\frac{\sigma_Z^2}{1-\phi^2} = \sigma_Z^2\]
@@ -103,7 +103,7 @@ Note that $\phi_{11}$ and $\rho_X(1)$ is used interchangeablly.
 
 \begin{theorem}[Durbin-Levinson Algorithm]
     The coefficients $\phi_{n1}, \ldots, \phi_{nn}$ can be computed recursively as 
-    \[\phi_{nn} = \left[\gamma_X(n) = \sum_{j=1}^{n-1}\phi_{n-1,j}\gamma_X(n-j)\right]v_{n-1}^{-1}\]
+    \[\phi_{nn} = \left[\gamma_X(n) - \sum_{j=1}^{n-1}\phi_{n-1,j}\gamma_X(n-j)\right]v_{n-1}^{-1}\]
     \[\begin{bmatrix}
         \phi_{n1} \\ \vdots \\ \phi_{n,n-1}
     \end{bmatrix} = \begin{bmatrix}

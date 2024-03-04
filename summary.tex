@@ -1,0 +1,315 @@
+\documentclass{article}
+\usepackage[landscape]{geometry}
+\usepackage{url}
+\usepackage{multicol}
+\usepackage{amsmath}
+\usepackage{esint}
+\usepackage{amsfonts}
+\usepackage{tikz}
+\usetikzlibrary{decorations.pathmorphing}
+\usepackage{amsmath,amssymb}
+\usepackage{listings}
+\usepackage{colortbl}
+\usepackage{xcolor}
+\usepackage{mathtools}
+\usepackage{amsmath,amssymb}
+\usepackage{enumitem}
+\usepackage{environ}
+\makeatletter
+
+\newcommand*\bigcdot{\mathpalette\bigcdot@{.5}}
+\newcommand*\bigcdot@[2]{\mathbin{\vcenter{\hbox{\scalebox{#2}{$\m@th#1\bullet$}}}}}
+\makeatother
+
+\title{}
+\usepackage[brazilian]{babel}
+\usepackage[utf8]{inputenc}
+
+\advance\topmargin-.8in
+\advance\textheight3in
+\advance\textwidth3in
+\advance\oddsidemargin-1.5in
+\advance\evensidemargin-1.5in
+\parindent0pt
+\parskip2pt
+\newcommand{\hr}{\centerline{\rule{3.5in}{1pt}}}
+%\colorbox[HTML]{e4e4e4}{\makebox[\textwidth-2\fboxsep][l]{texto}
+
+
+\definecolor{blue}{HTML}{A7BED3}
+\definecolor{brown}{HTML}{DAB894}
+\definecolor{pink}{HTML}{FFCAAF}
+
+
+\DeclareMathOperator{\Unif}{Unif}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\Cov}{Cov}
+\DeclareMathOperator{\Cor}{Cor}
+\DeclareMathOperator{\Bern}{Bernoulli}
+\DeclareMathOperator{\Bin}{Bin}
+\DeclareMathOperator{\Pois}{Poisson}
+\DeclareMathOperator{\atanh}{arctanh}
+\DeclareMathOperator{\arma}{ARMA}
+\DeclareMathOperator{\ar}{AR}
+\DeclareMathOperator{\ma}{MA}
+
+
+\DeclareMathOperator{\vif}{VIF}
+\DeclareMathOperator{\aic}{AIC}
+\DeclareMathOperator{\bic}{BIC}
+\DeclareMathOperator{\sch}{Sch}
+\DeclareMathOperator{\bias}{Bias}
+\DeclareMathOperator{\press}{PRESS}
+\DeclareMathOperator{\fin}{IN}
+\DeclareMathOperator{\fout}{OUT}
+
+\DeclareMathOperator{\odds}{odds}
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\dev}{Dev}
+
+
+
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}{Definition}[section]
+\newtheorem{fact}{Fact}[section]
+\newtheorem{prop}{Proposition}[section]
+\newtheorem{corollary}{Corollary}[section]
+
+
+
+
+
+\tikzset{header/.style={path picture={
+\fill[green, even odd rule, rounded corners]
+(path picture bounding box.south west) rectangle (path picture bounding box.north east) 
+([shift={( 2pt, 4pt)}] path picture bounding box.south west) -- 
+([shift={( 2pt,-2pt)}] path picture bounding box.north west) -- 
+([shift={(-2pt,-4pt)}] path picture bounding box.north east) -- 
+([shift={(-6pt, 6pt)}] path picture bounding box.south east) -- cycle;
+},
+label={[anchor=west, fill=green]north west:\textbf{#1:}},
+}} 
+
+\tikzstyle{mybox} = [draw=black, fill=white, very thick,
+    rectangle, rounded corners, inner sep=10pt, inner ysep=10pt]
+\tikzstyle{fancytitle} =[fill=black, text=white, rounded corners, font=\bfseries]
+
+
+\tikzstyle{bluebox} = [draw=blue, fill=white, very thick,
+    rectangle, rounded corners, inner sep=10pt, inner ysep=10pt]
+\tikzstyle{bluetitle} =[fill=blue, inner sep=4pt, text=white, font=\small]
+
+
+\tikzstyle{brownbox} = [draw=brown, fill=white, very thick,
+    rectangle, rounded corners, inner sep=10pt, inner ysep=10pt]
+\tikzstyle{browntitle} =[fill=brown, inner sep=4pt, text=white, font=\small]
+
+\tikzstyle{pinkbox} = [draw=pink, fill=white, very thick,
+    rectangle, rounded corners, inner sep=10pt, inner ysep=10pt]
+\tikzstyle{pinktitle} =[fill=pink, inner sep=4pt, text=white, font=\small]
+
+\tikzstyle{redbox} = [draw=red!35, fill=white, very thick,
+    rectangle, rounded corners, inner sep=10pt, inner ysep=10pt]
+\tikzstyle{redtitle} =[fill=red!35, inner sep=4pt, text=white, font=\small]
+
+
+\NewEnviron{brownbox}[1]{
+    \begin{tikzpicture}
+    \node[brownbox](box){%
+    \begin{minipage}{0.9\textwidth}
+    \BODY
+    \end{minipage}};
+    \node[browntitle, right=10pt] at (box.north west) {#1};
+    \end{tikzpicture}
+}
+
+ \NewEnviron{redbox}[1]{
+    \begin{tikzpicture}
+    \node[redbox](box){%
+    \begin{minipage}{0.9\textwidth}
+    \BODY
+    \end{minipage}};
+    \node[redtitle, right=10pt] at (box.north west) {#1};
+    \end{tikzpicture}
+}
+   
+    
+
+\NewEnviron{bluebox}[1]{%
+\begin{tikzpicture}
+    \node[bluebox](box){%
+        \begin{minipage}{0.9\textwidth}
+            \BODY
+        \end{minipage}
+    };
+    
+\node[bluetitle, right=10pt] at (box.north west) {#1};
+\end{tikzpicture}
+}
+
+\NewEnviron{pinkbox}[1]{%
+\begin{tikzpicture}
+    \node[pinkbox](box){%
+        \begin{minipage}{0.9\textwidth}
+            \BODY
+        \end{minipage}
+    };
+    
+\node[pinktitle, right=10pt] at (box.north west) {#1};
+\end{tikzpicture}
+}
+
+
+
+\NewEnviron{blackbox}[1]{%
+\begin{tikzpicture}
+    \node[mybox](box){%
+        \begin{minipage}{0.3\textwidth}
+        \raggedright
+        \small{
+            \BODY
+        }
+        \end{minipage}
+    };
+    
+\node[fancytitle, right=10pt] at (box.north west) {#1};
+\end{tikzpicture}
+}
+
+
+\begin{document}
+
+% \begin{center}{\large{\textbf{MAT }}}\\
+% \end{center}
+
+\begin{multicols*}{3}
+\begin{blackbox}{Model Types}
+    Typical structure of a time series is 
+    \[X_t = m_t + Y_t + S_t\]
+    where $m_t$ is a trend, $S_t$ is a seasonal part, and $Y_t$ is a stationary part.
+    \begin{itemize}[leftmargin=5pt]
+        \item \textbf{White Noise:} Sequence of iid random variables $\{Z_t\}$ with mean 0 and variance $\sigma_Z^2$.
+        \item \textbf{Random Walk:} $X_t = X_{t-1} + Z_t$, where $\{Z_t\}$ is white noise.
+        \item \textbf{MA(q):} Let $\theta(z) = 1 + \theta_1z + \theta_2z^2 + \cdots + \theta_qz^2$, 
+        \[X_t = Z_t + \theta_1Z_{t-1} + \cdots + \theta_qZ_{t-q} = \theta(B)Z_t\]
+        \item \textbf{AR(p):} Let $\phi(z) = 1-\phi_1z - \phi_2z^2 - \cdots - \phi_pz^p$,
+        \[X_t = \phi_1X_{t-1} + \cdots + \phi_pX_{t-p} + Z_t \implies Z_t = \phi(B)X_t\]
+        \item \textbf{ARMA(p,q):} $\phi(B)X_t = \theta(B)Z_t$
+        \[X_t - \phi_1X_{t-1} - \cdots - \phi_pX_{t-p} = Z_t + \theta_1Z_{t-1} + \cdots + \theta_qZ_{t-q}\]
+    \end{itemize}
+\end{blackbox}
+\begin{blackbox}{Autocovariance Functions}
+    The autocovariance function of a time series $\{X_t\}$ is 
+    \[\gamma_X(r,s) = \Cov(X_r, X_s) = E[(X_r - \mu_X(r))(X_s-\mu_X(s))]\]
+    \begin{bluebox}{ACF For Different Models}
+        \begin{itemize}[leftmargin=5pt]
+            \item \textbf{White Noise:} $\gamma_Z(t+h,t) = I(h = 0)$
+            \item \textbf{Random Walk:} $\gamma_S(t,t+h) = t\sigma_Z^2$
+            \item \textbf{MA(1):} $\gamma_X(t+h,t) = \begin{cases}
+                \sigma_Z^2(1+\theta^2) & h = 0\\
+                \theta\sigma_Z^2 & h = \pm 1\\
+                0 & |h| > 1
+            \end{cases}$
+            \item \textbf{AR(1):} $\gamma_X(h) = \sigma_Z^2\dfrac{\phi^h}{1-\phi^2}$
+            \item \textbf{ARMA(1,1):} $\gamma_X(0) = \sigma_Z^2\left(1+\dfrac{(\phi + \theta)^2}{1-\phi^2}\right)$, 
+            \[\gamma(1) = \sigma_Z^2\left[(\phi+\theta) + \frac{(\phi+\theta)^2\phi}{1-\phi^2}\right]\gamma(h) = \phi^{h-1}\gamma_X(1)\]
+            \raggedright
+            \item \textbf{AR(2):} $\gamma_X(0) = \dfrac{\sigma_Z^2(1-\phi_2)}{(1+\phi^2)[(1-\phi_2)^2-\phi_1^2]}$, $\gamma(1) =  \dfrac{\gamma(0)\phi_1}{1-\phi_2}$, $\gamma(h) = \phi_1\gamma(h-1) + \phi_2\gamma(h-2)$
+            \item \textbf{MA(q):} $\gamma_X(h) = \sigma_Z^2\sum\limits_{j=0}^{q-h}\theta_j\theta_{j+h}$
+        \end{itemize}
+    \end{bluebox}
+    \vspace{-1.3ex}
+\end{blackbox}
+\begin{blackbox}{ARMA Models}
+    \begin{redbox}{Solutions to ARMA Models}
+        \begin{enumerate}[label=\roman*), leftmargin=7pt]
+            \item A stationary solution for $\arma(p,q)$ exists whenever the autoregressive polynomial $\phi(z) = 1 - \phi_1z - \cdots - \phi_pz^p \neq 0$ for all $|z| = 1$. In other words, for $\arma$ to be stationary, if $z$ solves $\phi(z) = 0$, then $|z| \neq 1$. 
+            \item A stationary and causal solution for $\arma(p,q)$ exists whenever the autoregressive polynomial $\phi(z) = 1 - \phi_1z - \cdots - \phi_pz^p \neq 0$ for all $|z| \leq 1$. In other words, for $\arma$ to be stationary and causal, if $z$ solves $\phi(z) = 0$, then $|z| > 1$.
+        \end{enumerate}
+    \end{redbox}
+    \begin{brownbox}{Linear Processes}
+        \textbf{Definition}
+            Let $\{Z_t\}$ be white noise. Let $\psi_j, \ j \geq 0$, be a sequence of constants such that $\sum_{j=0}^\infty \psi_j^2 < \infty$. Then, \\[-5ex]
+            \[X_t = \sum_{j=0}^\infty \psi_jZ_{t-j}\]
+            is called a linear process.
+    \end{brownbox}
+    \textbf{Linear Representation of AR(1):} $\ar(1)$ is obtained by setting $p=1$ and $q=0$, so $Z_t = \phi(B)X_t$ where $\phi(z) = 1-\phi z$. Then, we define \\[-3ex]
+    \[\chi(z) = \frac{1}{\phi(z)}\]
+    This function has the power series expansion when $|\phi| < 1$, \\[-4ex]
+    \[\chi(z) = \frac{1}{\phi(z)} = \sum_{j=0}^\infty \phi^jz^j\]
+    Multiplying this with our equation for $Z_t$, \\[-1ex]
+    \[\chi(B)\phi(B)X_t = \chi(B)Z_t \iff X_t = \chi(B)Z_t\]
+    Thus, our linear representation of $\ar(1)$ is \\[-3ex]
+    \[X_t = \chi(B)Z_t = \sum_{j=0}^\infty \phi^jB^jZ_t = \sum_{j=0}^\infty \phi^jZ_{t-j}\]
+    \textbf{Linear Representation of ARMA(1,1):} Here we have $\phi(B)X_t = \theta(B)Z_t$
+    where $\phi(z) = 1 - \phi z$ and $\theta(z) = 1 + \theta z$. Then define $\chi(z)$ the same way and multiply on both sides to get $X_t = \chi(B)\theta(B)Z_t$.\\[-4ex]
+    \[X_t = \sum_{j=0}^\infty \phi^jB^j(1+\theta B)Z_t = \sum_{j=0}^\infty \phi^jZ_{t-j} + \theta\sum_{j=0}^\infty \phi^jZ_{t-(j+1)}\]
+    We want to write this in the form:\\[-3ex]
+    \[\sum_{j=0}^\infty \psi_jZ_{t-j} = \sum_{j=0}^\infty \phi^jZ_{t-j} + \theta\sum_{j=0}^\infty\phi^j Z_{t-j-1}\]
+    \[\psi_0Z_t + \sum_{j=1}^\infty \psi_jZ_{t-j} = \phi^0Z_t + \sum_{j=1}^\infty (\phi^j + \theta \phi^{j-1})Z_{j-1}\]
+    \vspace{-2ex}
+
+    Hence $\psi_0 = 1, \ \psi_j = \phi^{j-1}(\theta + \phi), \ j \geq 1$.
+\end{blackbox}
+\begin{blackbox}{Partial Autocorrelation Functions}
+    Finding the partial autocorrelation function between $X_1$ and $X_2$ when removing the effect of $X_3$:
+    \begin{enumerate}[label=\roman*), leftmargin=7pt]
+        \item First regress $X_1$ on $X_3$, compute the regression coefficient $\beta_{13}$,\\[-4ex]
+        \[X_1 = \beta_{13}X_3 + Z\]
+        where $Z$ has mean zero and is independent of $X_3$. Then multiply by $X_3$ and take expected value\\[-1ex]
+        \[E(X_1X_3) = \beta_{13}E(X_3^2) + E(ZX_3)\]
+        \[\gamma_X(2) = \beta_{13}\gamma_X(0) + E(ZX_3) = \beta_{13}\gamma_X(0)\]
+        This gives us $\beta_{13} = \dfrac{\gamma_X(2)}{\gamma_X(0)} = \rho_X(2)$.
+        \item Then similarily, we regress $X_2$ on $X_3$, \\[-1.5ex]
+        \[X_2 = \beta_{23}X_3 + V\]
+        and we get $\beta_{23} = \dfrac{\gamma_X(1)}{\gamma_X(0)} = \rho_X(1)$.
+        \item Finally, we define the partial autocorrelation function (PACF) between $X_1$ and $X_2$ when removing the effect of $X_3$ as
+        \vspace{-1ex}
+        \begin{align*}
+            \rho_{12.3} &= \Cor(X_1 - \beta_{13}X_3, X_2-\beta_{23}X_3)\\
+            &= \frac{\Cov(X_1 - \beta_{13}X_3, X_2 - \beta_{23}X_3)}{\sqrt{\Var(X_1-\beta_{13}X_3)}\sqrt{\Var(X_2-\beta_{23}X_3)}}  
+        \end{align*}
+        We can rewrite the covariance using linearity of covariance as $\gamma_X(1)(1-\rho_X(2))$, and similarily for the variances 
+        \vspace{-2ex}
+        \begin{align*}
+            \Var(X_1 - \beta_{13}X_3) &= \Cov(X_1 - \beta_{13}X_3, X_1 - \beta_{13}Y_3)\\
+            &= \Cov(X_1,X_1) + \Cov(\beta_{13}X_3,\beta_{13}X_3)\\
+            &- \Cov(X_1,\beta_{13}X_3) - \Cov(\beta_{13}X_3,X_1)\\
+            &= \gamma_X(0)(1-\rho_X^2(2))\\
+            \Var(X_2 - \beta_{23}X_3) &= \gamma_X(0)(1- \rho_X^2(1))
+        \end{align*}
+        Thus, the partial autocorrelation function is
+        \vspace{-1ex}
+        \begin{align*}
+            \rho_{12.3} &= \frac{\gamma_X(1)(1-\rho_X(2))}{\gamma_X(0)\sqrt{(1-\rho_X^2(2))(1-\rho_X^2(1))}}\\
+            &= \frac{\Cor(X_1,X_2) - \Cor(X_2,X_3)\Cor(X_1,X_3)}{\sqrt{(1-\Cor^2(X_1,X_3))(1-\Cor^2(X_2,X_3))}}
+        \end{align*}
+    \end{enumerate}
+\end{blackbox}
+\begin{blackbox}{Interpreting PACF/ACF Plots}
+    \begin{center}
+        \begin{tabular}{c|c|c}
+            & $\ar(p)$ & $\ma(q)$\\ 
+            \hline
+        & &  \\
+        ACF & Tails off & Significant at lag $q$ \\
+        &  (Geometric Decay) & Cuts off after lag $q$ \\
+        \hline
+        & & \\
+        PACF & Significant at each lag $p$ & Tails off \\
+        & Cuts off after lag $p$ & (Geometric Decay) \\
+        \end{tabular}
+    \end{center}
+\end{blackbox}
+
+\begin{blackbox}{Yule Walker Equations}
+    
+\end{blackbox}
+
+\end{multicols*}
+
+
+
+\end{document}
+    
