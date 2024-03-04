@@ -3,7 +3,7 @@
 Our objective is to forecast or predict $X_{n+k}$, for some $k\geq1$, having observed $\{X_1,\ldots,X_n\}$ from a time series with a known mean $\mu$ and known autocovariance function $\gamma_X(k)$.\\
 
 Consider a stationary sequence with mean $\mu = E(X_t)$ and covariance $\gamma_X(h)$. Denote $P_nX_{n+k}$ as the predicted value of $X_{n+k}$ given that we have $n$ observations $X_1,\ldots,X_n$. Then, the best linear predictor of $X_{n+k}$ is given by
-\[P_nX_{n+k} = a_0 + a_1X_n + \cdots + a_nX_1 = a_0 \sum_{i=1}^n a_iX_{n+1-i}\]
+\[P_nX_{n+k} = a_0 + a_1X_n + \cdots + a_nX_1 = a_0 + \sum_{i=1}^n a_iX_{n+1-i}\]
 where $a_0,\ldots,a_n$ are constants. We want to find optimal values for $a_0,\ldots,a_n$, in this case we will minimize the mean squared error (MSE) of the prediction
 \[E\left[(X_{n+k} - P_nX_{n+k})^2\right]\]
 

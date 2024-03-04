@@ -51,6 +51,7 @@
 \DeclareMathOperator{\atanh}{arctanh}
 \DeclareMathOperator{\arma}{ARMA}
 \DeclareMathOperator{\ar}{AR}
+\DeclareMathOperator{\mspe}{MSPE}
 \DeclareMathOperator{\ma}{MA}
 
 
@@ -304,7 +305,16 @@ label={[anchor=west, fill=green]north west:\textbf{#1:}},
 \end{blackbox}
 
 \begin{blackbox}{Yule Walker Equations}
-    
+    Denote $P_{n}X_{n+k}$ as the predicted value of $X_{n+k}$ given that we have $n$ observations. 
+    \[P_nX_{n+k} = a_0 + a_1X_{n} + a_2X_{n-1} + \cdots a_nX_1\]  
+    To find coefficients $a_0,\ldots, a_n$, solve the system 
+    \[\Gamma_n\textbf{a}_n = \gamma(n;k), \ \gamma(n;k) = \left(\gamma_X(k), \ldots, \gamma_X(k+n-1)\right)\]
+    \[\Gamma_n = \left[\gamma_X(i-j)\right]^n_{i,j=1}, \ \textbf{a}_n = (a_1, \ldots, a_n)^T\]   
+    The mean squared prediction error is 
+    \begin{align*}
+        \mspe_n(k) &= E\left[\left(X_{n+k} - \sum_{i=1}^na_iX_{ n+1-    i}\right)^2\right]\\
+        &= \gamma(0) - \textbf{a}_n\gamma(n;k)  
+    \end{align*}
 \end{blackbox}
 
 \end{multicols*}
